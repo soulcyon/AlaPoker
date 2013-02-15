@@ -103,7 +103,7 @@
 
 		// dealt players
 		for($i = 0; $i< count($dealt); $i++) {
-			echo "Hand " . ($i + 1) . ": " . $dealt[$i][0] . " " . $dealt[$i][1] . "<br/>";
+			echo "Player " . ($i + 1) . ": " . $dealt[$i][0] . " " . $dealt[$i][1] . "<br/>";
 		}
 
 		// board
