@@ -4,13 +4,19 @@
 	ini_set("display_errors", true);
 	session_start();
 
+	if(!isset($_POST['players'])) {
+		Header("Location: index.html");
+	}
+
 	$deck = $_SESSION['deck'] = build_deck();
 	$players = $_POST['players'];
-	$cards;
+	$dealt = array();
+	$board = array();
 	
+	build_deck();
 	shuffle_deck();
-	
-	deal_hands();
+
+	deal_cards();
 	bet();
 	
 	flop();
@@ -22,50 +28,44 @@
 	river();
 	pay_out();
 
-	if(!isset($_POST['players'])) {
-		Header("Location: index.html");
-	}
+	end_game();
 
-	function deal_hands() {
+	function deal_cards() {
 		
-		global $deck, $players, $cards;
-		$cards = array();
+		global $deck, $players, $dealt;
 
-		// player cards
+		// players dealt here
 		for($i = 0; $i < $players; $i++) {
-			$cards[$i] = array($deck[$i], $deck[$i + $players]);
+			$dealt[$i] = array($deck[$i], $deck[$i + $players]);
 		}
-
-		print_r($cards);
 
 	}
 
 	function flop() {
 		
-		global $deck, $players, $cards;
-		$players = $_POST['players'];
+		global $deck, $players, $board;
 
-		print_r($cards);
-
+		$i = 2 * $players;
+		$board[0] = $deck[$i + 1]; // burn one
+		$board[1] = $deck[$i + 2];
+		$board[2] = $deck[$i + 3];
 	}
 
 	function turn() {
 		
-		global $deck, $players, $cards;
-		$players = $_POST['players'];
-		$cards = array();
-
-		print_r($cards);
+		global $deck, $players, $board;
+		
+		$i = 2 * $players + 4;
+		$board[3] = $deck[$i + 1]; // burn one
 
 	}
 
 	function river() {
 		
-		global $deck, $players, $cards;
-		$players = $_POST['players'];
-		$cards = array();
+		global $deck, $players, $board;
 
-		print_r($cards);
+		$i = 2 * $players + 6;
+		$board[4] = $deck[$i + 1]; // burn one
 
 	}
 
@@ -76,8 +76,6 @@
 	function pay_out() {
 
 	}
-
-	// deck functions
 
 	function build_deck() {
 
@@ -99,10 +97,21 @@
 
 	}
 
-	function printDeck() {
+	function end_game() {
 
-		global $deck;
-		print_r($deck);
+		global $board, $dealt;
+
+		// dealt players
+		for($i = 0; $i< count($dealt); $i++) {
+			echo "Hand " . ($i + 1) . ": " . $dealt[$i][0] . " " . $dealt[$i][1] . "<br/>";
+		}
+
+		// board
+		echo "Board: "; 
+		for($i = 0; $i < count($board); $i++) {
+			echo $board[$i] . " ";
+		}
+		echo "<br/>";
 	}
 
 ?>
