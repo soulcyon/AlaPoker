@@ -113,5 +113,10 @@
 		}
 		echo "<br/>";
 	}
-
+	for($i = 0; $i < count($dealt); $i++){
+		for($j = 0; $j < count($dealt[$i]); $j++){
+		echo  '<img src="Cards/'.$dealt[$i][$j].'.png" alt="Random Hand">';
+		}
+		echo "<br/>";
+	}
 ?>

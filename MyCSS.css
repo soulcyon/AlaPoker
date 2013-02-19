@@ -1,0 +1,13 @@
+@import url(http://fonts.googleapis.com/css?family=Allura);
+
+#docheader
+	{
+	height:auto;
+	border:1px solid black;
+	color:green;
+	text-align:center;
+	clear:both;
+	background-color:black;
+	}
+
+.felt { background-color: green;  height: 400px; width:100%; float:left;}

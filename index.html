@@ -1,14 +1,30 @@
 <html>
-
+<link rel="stylesheet" type="text/css" href="MyCSS.css"/>
+<header id="docheader">
+<h1>Welcome to A'La Poker</h1>
+</header>
 <head>
-	<title>Ala-Poker</title>
+	<meta http-equiv="Content-Type" content="text/html: charset=utf-8">
+	<title>A'La Poker</title>
 </head>
 
 <body>
-	Virtual Players:
+	<div id = "felt" class = "felt">
+		Virtual Players:
 	<form id="inputform" action="game.php" method="post">
-	<select name="players">
-		<option value="1">1</option>
+	<div align ="left"> <br>
+	<input type = "radio" name = "players" value = "2" checked> 2 <br>
+	<input type = "radio" name = "players" value = "3"> 3 <br>
+	<input type = "radio" name = "players" value = "4"> 4 <br>
+	<input type = "radio" name = "players" value = "5"> 5 <br>
+	<input type = "radio" name = "players" value = "6"> 6 <br>
+	<input type = "radio" name = "players" value = "7"> 7 <br>
+	<input type = "radio" name = "players" value = "8"> 8 <br>
+	<input type = "radio" name = "players" value = "9"> 9 <br>
+	<input type = "radio" name = "players" value = "10"> 10 <br>
+	</div>
+	
+	<!--<select name="players">
 		<option value="2">2</option>
 		<option value="3">3</option>
 		<option value="4">4</option>
@@ -18,9 +34,12 @@
 		<option value="8">8</option>
 		<option value="9">9</option>
 		<option value="10">10</option>
-	</select>
+	</select> -->
 	<input type="submit" value="submit">
 	</form>
+	</div>
+	
+	
 </body>
 
-<html>
+</html>
