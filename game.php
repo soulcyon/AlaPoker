@@ -8,6 +8,9 @@
 		Header("Location: index.html");
 	}
 
+	$kinds = array("2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"); // T - 10
+	$suits = array("S", "H", "D", "C"); // spades, hearts, diamonds, clubs
+
 	$deck;
 	$players = $_POST['players'];
 	$dealt = array();
@@ -30,11 +33,8 @@
 
 	function build_deck() {
 
-		global $deck;
+		global $deck, $kinds, $suits;
 		$deck = array();
-
-		$kinds = array("2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"); // T - 10
-		$suits = array("S", "H", "D", "C"); // spades, hearts, diamonds, clubs
 
 		for($s = 0; $s < count($suits); $s++)
 			for($k = 0; $k < count($kinds); $k++)
@@ -56,7 +56,7 @@
 
 		// players dealt here
 		for($i = 0; $i < $players; $i++) {
-			$dealt[$i] = array($deck[$i], $deck[$i + $players]);
+			$dealt[$i] = bubble_up($deck[$i], $deck[$i + $players]);
 		}
 	
 		// inject html to show players' cards
@@ -65,6 +65,35 @@
 				echo '<img src="Cards/' . $dealt[$i][$j] . '.png" alt="'. $dealt[$i][$j] . '">';
 			}
 			echo "<br/>";
+		}
+	}
+
+	function bubble_up($c1, $c2) {
+		
+		global $kinds, $suits;
+		
+		$k1 = array_search($c1{0}, $kinds);
+		$k2 = array_search($c2{0}, $kinds);
+
+		if($k1 > $k2) {
+			return array($c1, $c2);
+		}
+		
+		else if($k1 < $k2) {
+			return array($c2, $c1);
+		}
+
+		else {
+			
+			$s1 = array_search($c1{1}, $suits);
+			$s2 = array_search($c2{1}, $suits);
+			
+			if($s1 > $s2) {
+				return array($c1, $c2);
+			}
+			else if($s1 < $s2) {
+				return array($c2, $c1);
+			}
 		}
 	}
 
