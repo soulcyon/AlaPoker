@@ -1,5 +1,10 @@
 $(document).ready(function(){
 	$("button").click(function(){
-		alert($(this).attr("value"));
+		$.post("game.php", {
+			players: $(this).val()
+		}, function(d){
+			$("#init").hide();
+			$("#game").show().html(d);
+		});
 	});
 });
