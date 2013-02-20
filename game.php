@@ -61,11 +61,13 @@
 	
 		// inject html to show players' cards
 		for($i = 0; $i < count($dealt); $i++) {
+			echo '<p class="hand">';
 			for($j = 0; $j < count($dealt[$i]); $j++) {
 				echo '<img src="Cards/' . $dealt[$i][$j] . '.png" alt="'. $dealt[$i][$j] . '">';
 			}
-			echo "<br/>";
+			echo '</p>';
 		}
+		echo "<div class='break'></div>";
 	}
 
 	function bubble_up($c1, $c2) {
@@ -108,7 +110,7 @@
 		
 		// inject html to show flop cards
 		for($i = 0; $i < 3; $i++) {
-			echo '<img src="Cards/' . $board[$i] . '.png" alt="'. $board[$i] . '">';
+			echo '<img src="Cards/' . $board[$i] . '.png" alt="'. $board[$i] . '" class="flop community">';
 		}
 	}
 
@@ -120,7 +122,7 @@
 		$board[3] = $deck[$i + 1]; // burn one
 
 		// inject html to show turn card
-		echo '<img src="Cards/' . $board[3] . '.png" alt="'. $board[3] . '">';
+		echo '<img src="Cards/' . $board[3] . '.png" alt="'. $board[3] . '" class="turn community">';
 
 	}
 
@@ -132,7 +134,7 @@
 		$board[4] = $deck[$i + 1]; // burn one
 
 		// inject html to show river card
-		echo '<img src="Cards/' . $board[4] . '.png" alt="'. $board[4] . '">';
+		echo '<img src="Cards/' . $board[4] . '.png" alt="'. $board[4] . '" class="river community">';
 
 	}
 

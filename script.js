@@ -1,10 +1,11 @@
 $(document).ready(function(){
-	$("button").click(function(){
+	$("#game").hide();
+	$("#init button").click(function(){
 		$.post("game.php", {
 			players: $(this).val()
 		}, function(d){
 			$("#init").hide();
-			$("#game").show().html(d);
+			$("#game").show().find(".content").html(d);
 		});
 	});
 });
