@@ -8,14 +8,12 @@
 		Header("Location: index.html");
 	}
 
-	$deck = $_SESSION['deck'] = build_deck();
+	$deck;
 	$players = $_POST['players'];
 	$dealt = array();
 	$board = array();
 	
 	build_deck();
-	shuffle_deck();
-
 	deal_cards();
 	bet();
 	
@@ -26,56 +24,9 @@
 	bet();
 	
 	river();
-	pay_out();
-
+	
 	end_game();
-
-	function deal_cards() {
-		
-		global $deck, $players, $dealt;
-
-		// players dealt here
-		for($i = 0; $i < $players; $i++) {
-			$dealt[$i] = array($deck[$i], $deck[$i + $players]);
-		}
-
-	}
-
-	function flop() {
-		
-		global $deck, $players, $board;
-
-		$i = 2 * $players;
-		$board[0] = $deck[$i + 1]; // burn one
-		$board[1] = $deck[$i + 2];
-		$board[2] = $deck[$i + 3];
-	}
-
-	function turn() {
-		
-		global $deck, $players, $board;
-		
-		$i = 2 * $players + 4;
-		$board[3] = $deck[$i + 1]; // burn one
-
-	}
-
-	function river() {
-		
-		global $deck, $players, $board;
-
-		$i = 2 * $players + 6;
-		$board[4] = $deck[$i + 1]; // burn one
-
-	}
-
-	function bet() {
-
-	}
-
-	function pay_out() {
-
-	}
+	payout();
 
 	function build_deck() {
 
@@ -97,26 +48,77 @@
 
 	}
 
+	function deal_cards() {
+		
+		global $deck, $players, $dealt;
+	
+		shuffle_deck();
+
+		// players dealt here
+		for($i = 0; $i < $players; $i++) {
+			$dealt[$i] = array($deck[$i], $deck[$i + $players]);
+		}
+	
+		// inject html to show players' cards
+		for($i = 0; $i < count($dealt); $i++) {
+			for($j = 0; $j < count($dealt[$i]); $j++) {
+				echo '<img src="Cards/' . $dealt[$i][$j] . '.png" alt="'. $dealt[$i][$j] . '">';
+			}
+			echo "<br/>";
+		}
+	}
+
+	function flop() {
+		
+		global $deck, $players, $board;
+
+		$i = 2 * $players;
+		$board[0] = $deck[$i + 1]; // burn one
+		$board[1] = $deck[$i + 2];
+		$board[2] = $deck[$i + 3];
+		
+		// inject html to show flop cards
+		for($i = 0; $i < 3; $i++) {
+			echo '<img src="Cards/' . $board[$i] . '.png" alt="'. $board[$i] . '">';
+		}
+	}
+
+	function turn() {
+		
+		global $deck, $players, $board;
+		
+		$i = 2 * $players + 4;
+		$board[3] = $deck[$i + 1]; // burn one
+
+		// inject html to show turn card
+		echo '<img src="Cards/' . $board[3] . '.png" alt="'. $board[3] . '">';
+
+	}
+
+	function river() {
+		
+		global $deck, $players, $board;
+
+		$i = 2 * $players + 6;
+		$board[4] = $deck[$i + 1]; // burn one
+
+		// inject html to show river card
+		echo '<img src="Cards/' . $board[4] . '.png" alt="'. $board[4] . '">';
+
+	}
+
+	function bet() {
+
+	}
+
 	function end_game() {
 
 		global $board, $dealt;
-
-		// dealt players
-		for($i = 0; $i< count($dealt); $i++) {
-			echo "Player " . ($i + 1) . ": " . $dealt[$i][0] . " " . $dealt[$i][1] . "<br/>";
-		}
-
-		// board
-		echo "Board: "; 
-		for($i = 0; $i < count($board); $i++) {
-			echo $board[$i] . " ";
-		}
-		echo "<br/>";
+	
+		//determine winner here
 	}
-	for($i = 0; $i < count($dealt); $i++){
-		for($j = 0; $j < count($dealt[$i]); $j++){
-		echo  '<img src="Cards/'.$dealt[$i][$j].'.png" alt="Random Hand">';
-		}
-		echo "<br/>";
+
+	function payout() {
+		// payout with house edge
 	}
 ?>
