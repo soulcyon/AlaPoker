@@ -9,15 +9,17 @@
 	}
 
 	$kinds = array("2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"); // T - 10
-	$suits = array("S", "H", "D", "C"); // spades, hearts, diamonds, clubs
+	$suits = array("C", "D", "H", "S"); // clubs, diamonds, hearts, spades
 
 	$deck;
 	$players = $_POST['players'];
+
 	$dealt = array();
 	$board = array();
+	$dead = array();
 	
-	build_deck();
-	deal_cards();
+	buildDeck();
+	dealCards();
 	bet();
 	
 	flop();
@@ -28,10 +30,10 @@
 	
 	river();
 	
-	end_game();
+	endGame();
 	payout();
 
-	function build_deck() {
+	function buildDeck() {
 
 		global $deck, $kinds, $suits;
 		$deck = array();
@@ -41,22 +43,22 @@
 				$deck[$s * count($kinds) + $k] = $kinds[$k] . $suits[$s];
 	}
 
-	function shuffle_deck() {
+	function shuffleDeck() {
 
 		global $deck;
 		shuffle($deck);
 
 	}
 
-	function deal_cards() {
+	function dealCards() {
 		
 		global $deck, $players, $dealt;
 	
-		shuffle_deck();
+		shuffleDeck();
 
 		// players dealt here
 		for($i = 0; $i < $players; $i++) {
-			$dealt[$i] = bubble_up($deck[$i], $deck[$i + $players]);
+			$dealt[$i] = bubbleUp($deck[$i], $deck[$i + $players]);
 		}
 	
 		// inject html to show players' cards
@@ -70,7 +72,7 @@
 		echo "<div class='break'></div>";
 	}
 
-	function bubble_up($c1, $c2) {
+	function bubbleUp($c1, $c2) {
 		
 		global $kinds, $suits;
 		
@@ -104,6 +106,7 @@
 		global $deck, $players, $board;
 
 		$i = 2 * $players;
+		$dead[0] = $deck[$i];
 		$board[0] = $deck[$i + 1]; // burn one
 		$board[1] = $deck[$i + 2];
 		$board[2] = $deck[$i + 3];
@@ -119,6 +122,7 @@
 		global $deck, $players, $board;
 		
 		$i = 2 * $players + 4;
+		$dead[1] = $deck[$i];
 		$board[3] = $deck[$i + 1]; // burn one
 
 		// inject html to show turn card
@@ -131,6 +135,7 @@
 		global $deck, $players, $board;
 
 		$i = 2 * $players + 6;
+		$dead[2] = $deck[$i];
 		$board[4] = $deck[$i + 1]; // burn one
 
 		// inject html to show river card
@@ -142,10 +147,9 @@
 
 	}
 
-	function end_game() {
+	function endGame() {
 
 		global $board, $dealt;
-	
 		//determine winner here
 	}
 
