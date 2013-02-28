@@ -1,5 +1,14 @@
 <?php
+/**
+ * Hands.php
+ *
+ * @author     Mihir Sanghavi <mihir.h.sanghavi@gmail.com>
+ * @author     Sashank Tadepalli <dijjit@gmail.com>
+ * @copyright  2013 A la poker
+ * @license    All rights reserved
+ */
 class Hands {
+	// Reverse-lookup tables for suits and ranks
 	private static $suits = array("C" => 0, "D" => 1, "H" => 2, "S" => 3);
 	private static $ranks = array("2" => 0, "3" => 1, "4" => 2, "5" => 3, "6" => 4, "7" => 5, "8" => 6, "9" => 7, "T" => 8, "J" => 9, "Q" => 10, "K" => 11, "A" => 12);
 
@@ -24,6 +33,7 @@ class Hands {
 		}
 		return $cards;
 	}
+	
 	private static function mask_cards($cards){
 		$hand_mask = 0;
 		for($i = 0; $i < count($cards); $i++) {

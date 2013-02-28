@@ -1,4 +1,12 @@
 <?php
+/**
+ * Evalulate.php
+ *
+ * @author     Mihir Sanghavi <mihir.h.sanghavi@gmail.com>
+ * @author     Sashank Tadepalli <dijjit@gmail.com>
+ * @copyright  2013 A la poker
+ * @license    All rights reserved
+ */
 class Evaluate {
     // $cards = 3378524412361665
     // $cards = 2181499788985344
