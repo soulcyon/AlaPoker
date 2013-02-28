@@ -496,7 +496,7 @@ class Tables {
     );
 }
 
-// test harness
+// Scaffolding
 var_dump(Tables::$TWO_CARD_TABLE);
 var_dump(Tables::$POCKET_169_TABLE);
 var_dump(Tables::$POCKET_HAND_169_ENUM);
