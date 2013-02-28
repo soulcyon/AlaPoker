@@ -14,16 +14,17 @@ class AlaPoker {
 
 	public function __construct($hands, $board, $deads) {
 		
-		$this->hands = Hands::parse($hands, "");
-		$this->board = Hands::parse("", $board);
-		$this->deads = Hands::parse("", $deads);
+		$this->hands = Hands::parse($hands, true);
+		$this->board = Hands::parse($board);
+		$this->deads = Hands::parse($deads);
 	}
 
 	public function getOdds() {
 		
-		$board_mask = Hands::mask_cards("", $board);
-		$deads_mask = Hands::mask_cards("", $deads);
+		$board_mask = Hands::mask_cards($board);
+		$deads_mask = Hands::mask_cards($deads);
 
+		var_dump($board_mask);
 	}
 }
 
