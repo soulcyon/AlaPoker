@@ -2,7 +2,7 @@
 
 class Evaluate {
     
-    public static function evaluate7($cards, $numberOfCards) {
+    public static function evaluate7($cards = 3378524412361665, $numberOfCards = 7) {
         
         $retval = 0; 
         $four_mask; 
@@ -17,7 +17,7 @@ class Evaluate {
         $sh = ($cards >> (2)) & 0x1fff;
         $ss = ($cards >> (3)) & 0x1fff;
 
-        $ranks = $$sc | $$sd | $$sh | $$ss;
+        $ranks = $sc | $sd | $sh | $ss;
         $n_ranks = $nBitsTable[$ranks];
         $n_dups = ($numberOfCards - $n_ranks);
 
@@ -163,4 +163,6 @@ class Evaluate {
         }
     }
 }
+
+Evaluate::evaluate7();
 ?>
