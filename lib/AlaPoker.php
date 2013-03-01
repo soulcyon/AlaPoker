@@ -49,9 +49,8 @@ class AlaPoker {
 	}
 
 	public function getOdds() {
-
 		foreach (Yield::get(intval($this->board), intval($this->deads), 5) as $boardhand)
-        {   
+        {
             // Evaluate all hands and determine the best hand
             $bestpocket = Evaluate::evaluate7($this->hands[0] | $boardhand, 7);
             $pockethands[0] = $bestpocket;
@@ -110,10 +109,9 @@ class AlaPoker {
         if ($this->totalHands != 0)
         {   
             for ($i = 0; $i < $this->players; $i++) {
-                $odds[$i] = ($this->wins[$i] + $this->ties[$i]) / 2.0 / $this->totalHands;
+                $odds[$i] = ($this->wins[$i] + $this->ties[$i] / 2.0) / $this->totalHands;
             }
         }
-        var_dump('wins:' . print_r($this->wins, true) . 'ties:' . print_r($this->ties, true) . 'losses:' . print_r($this->losses, true));
         return $odds;
 	}
 }

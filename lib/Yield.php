@@ -114,7 +114,6 @@ class Yield {
                 }
                 break;
             case 5:
-                echo "Here";
                 for ($i1 = 51; $i1 >= 0; $i1--)
                 {
                     $card1 = Tables::$CARD_MASKS_TABLE[$i1];
@@ -200,7 +199,7 @@ class Yield {
                 }
                 break;
             case 1:
-                $$length = Tables::$CARD_MASKS_TABLE.$length;
+                $length = count(Tables::$CARD_MASKS_TABLE);
                 for ($i1 = 0; $i1 < $length; $i1++)
                 {
                     $card1 = Tables::$CARD_MASKS_TABLE[$i1];
