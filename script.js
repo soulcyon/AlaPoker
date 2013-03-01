@@ -18,11 +18,14 @@ $(document).ready(function(){
 	});
 	function getProbs(d){
 		$("button").removeAttr("disabled");
-		for(i = 0; i < d.length; i++){
+		for(i = 0; i < d.wins.length; i++){
 			if( $(".hand").eq(i).find(".prob").length == 0 ){
 				$(".hand").append($("<div />").addClass("prob"));
 			}
-			$(".hand").eq(i).find(".prob").html((Math.floor(d[i] * 10000)/100) + "%");
+			$(".hand").eq(i).find(".prob").html(
+				"Win: " + ((Math.floor(d.wins[i]/d.total * 10000)/100) + "%<br />") +
+				"Tie: " + ((Math.floor(d.ties[i]/d.total * 10000)/100) + "%")
+			);
 		}
 	}
 	$(document).delegate("#pre", "click", function(){

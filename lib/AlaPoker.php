@@ -105,14 +105,14 @@ class AlaPoker {
         }
 
         // Odds of winning as a percentage for each player
-        $odds = array();
+        /*$odds = array();
         if ($this->totalHands != 0)
         {   
             for ($i = 0; $i < $this->players; $i++) {
                 $odds[$i] = ($this->wins[$i] + $this->ties[$i] / 2.0) / $this->totalHands;
             }
-        }
-        return $odds;
+        }*/
+        return array("wins"=>$this->wins, "ties"=>$this->ties,"total"=>$this->totalHands);
 	}
 }
 ?>

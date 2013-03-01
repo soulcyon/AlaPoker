@@ -71,12 +71,11 @@
 		global $deck, $players, $dealt;
 	
 		shuffleDeck();
-
+		
 		// players dealt here
 		for($i = 0; $i < $players; $i++) {
 			$dealt[$i] = bubbleUp($deck[$i], $deck[$i + $players]);
 		}
-	
 		// inject html to show players' cards
 		for($i = 0; $i < count($dealt); $i++) {
 			echo '<p class="hand">';
