@@ -12,7 +12,7 @@ class Hands {
 	private static $suits = array("C" => 0, "D" => 1, "H" => 2, "S" => 3);
 	private static $ranks = array("2" => 0, "3" => 1, "4" => 2, "5" => 3, "6" => 4, "7" => 5, "8" => 6, "9" => 7, "T" => 8, "J" => 9, "Q" => 10, "K" => 11, "A" => 12);
 
-	public static function parse($cards_str, $is_pockets = false){
+	public static function parse($cards_str, $is_pockets = false) {
 		if(strlen($cards_str) == 0)
 			return false;
 

@@ -9,5 +9,4 @@ $ala = new AlaPoker("QH QC JH JC", "", "AH AC AS");
 $ala->getOdds();
 
 echo json_encode($ala->getOdds());
-
 ?>
