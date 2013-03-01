@@ -4,6 +4,13 @@
 	ini_set("display_errors", true);
 	session_start();
 
+	if(isset($_POST["calc"]) && $_POST["calc"] == true){
+		Header("Content-type: application/json");
+		require_once("lib/AlaPoker.php");
+		$ala = new AlaPoker($_POST["h"], $_POST["b"], $_POST["d"]);
+		die(json_encode($ala->getOdds()));
+	}
+
 	if(!isset($_POST['players'])) {
 		Header("Location: index.html");
 	}
@@ -21,7 +28,13 @@
 	buildDeck();
 	dealCards();
 	bet();
-	
+
+	echo "<button id='pre'>P</button>";
+	echo "<button id='flop'>F</button>";
+	echo "<button id='turn'>T</button>";
+	echo "<button id='river'>R</button><br /><br />";
+	echo "<img src='Cards/Back.png' class='burn community' />";
+
 	flop();
 	bet();
 	
@@ -32,6 +45,9 @@
 	
 	endGame();
 	payout();
+
+	echo "<input type='hidden' id='dead' value='" . implode(' ', $dead) . "' />";
+	
 
 	function buildDeck() {
 
@@ -103,7 +119,7 @@
 
 	function flop() {
 		
-		global $deck, $players, $board;
+		global $deck, $players, $board, $dead;
 
 		$i = 2 * $players;
 		$dead[0] = $deck[$i];
@@ -119,7 +135,7 @@
 
 	function turn() {
 		
-		global $deck, $players, $board;
+		global $deck, $players, $board, $dead;
 		
 		$i = 2 * $players + 4;
 		$dead[1] = $deck[$i];
@@ -132,7 +148,7 @@
 
 	function river() {
 		
-		global $deck, $players, $board;
+		global $deck, $players, $board, $dead;
 
 		$i = 2 * $players + 6;
 		$dead[2] = $deck[$i];
