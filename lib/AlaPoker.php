@@ -13,6 +13,7 @@
  */
 require_once("Tables.php");
 require_once("Hands.php");
+require_once("Evaluate.php");
 require_once("Yield.php");
 
 class AlaPoker {
@@ -50,15 +51,15 @@ class AlaPoker {
 		*/
 
         $totalhands = 0;
-		foreach (Yield::generate(intval($this->board), intval($this->deads), 5) as $boardhand)
+		foreach (Yield::get(intval($this->board), intval($this->deads), 5) as $boardhand)
         {
             // Evaluate all hands and determine the best hand
-            $bestpocket = Evaluate($pocketmasks[0] | $boardhand, 7);
+            $bestpocket = Evaluate::evaluate7($this->$hands[0] | $boardhand, 7);
             $pockethands[0] = $bestpocket;
             $bestcount = 1;
             for ($i = 1; $i < count($pockets); $i++)
             {
-                $pockethands[$i] = Evaluate($pocketmasks[$i] | $boardhand, 7);
+                $pockethands[$i] = Evaluate::evaluate7($this->$hands[$i] | $boardhand, 7);
                 if ($pockethands[$i] > $bestpocket)
                 {
                     $bestpocket = $pockethands[$i];
@@ -71,7 +72,7 @@ class AlaPoker {
             }
 
             // Calculate $wins/$ties/loses for each pocket + board combination.
-            for ($i = 0; $i < count($pockets); $i++)
+            for ($i = 0; $i < $this->$players; $i++)
             {
                 if ($pockethands[$i] == $bestpocket)
                 {
@@ -90,15 +91,15 @@ class AlaPoker {
                 }
             }
 
-            $totalHands++;
+            $this->$totalHands++;
         }
 
         // Odds of winning as a percentage for each player
         $odds = array();
         if ($totalhands != 0)
         {   
-            for ($i = 0; $i < count($pockets); $i++) {
-                $odds[$i] = ($wins[$i] + $ties[$i]) / 2.0 / $totalhands;
+            for ($i = 0; $i < $this->$players; $i++) {
+                $odds[$i] = ($wins[$i] + $ties[$i]) / 2.0 / $this->$totalHands;
             }
         }
         return $odds;
