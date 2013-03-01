@@ -6,7 +6,5 @@ require_once("AlaPoker.php");
 
 // $ala = new AlaPoker($_POST["hand"], $_POST["board"], $_POST["dead"]);
 $ala = new AlaPoker("QH QC JH JC", "", "AH AC AS");
-$ala->getOdds();
-
 echo json_encode($ala->getOdds());
 ?>

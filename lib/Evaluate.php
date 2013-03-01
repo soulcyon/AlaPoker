@@ -75,7 +75,7 @@ class Evaluate {
                     $two_mask = $ranks ^ ($sc ^ $sd ^ $sh ^ $ss);
                     $retval = (16777216 + (Tables::$TOP_CARDS_TABLE[$two_mask] << 16));
                     $t = $ranks ^ $two_mask;
-                    $kickers = (Tables::$TOP_FIVE_CARDS_TABLE[t] >> 4) & -16;
+                    $kickers = (Tables::$TOP_FIVE_CARDS_TABLE[$t] >> 4) & -16;
                     $retval += $kickers;
                     return $retval;
                 }
@@ -88,7 +88,7 @@ class Evaluate {
                     $retval = (33554432 
                         + (Tables::$TOP_FIVE_CARDS_TABLE[$two_mask]
                         & 1044480)
-                        + (Tables::$TOP_CARDS_TABLE[t] << $THIRD_CARD_SHIFT));
+                        + (Tables::$TOP_CARDS_TABLE[$t] << 8));
 
                     return $retval;
                 }
@@ -98,10 +98,10 @@ class Evaluate {
                     $three_mask = (($sc & $sd) | ($sh & $ss)) & (($sc & $sh) | ($sd & $ss));
                     $retval = (50331648 + (Tables::$TOP_CARDS_TABLE[$three_mask] << 16));
                     $t = $ranks ^ $three_mask; /* Only one bit set in three_mask */
-                    $second = Tables::$TOP_CARDS_TABLE[t];
+                    $second = Tables::$TOP_CARDS_TABLE[$t];
                     $retval += ($second << 12);
                     $t ^= (1 << $second);
-                    $retval += (Tables::$TOP_CARDS_TABLE[t] << $THIRD_CARD_SHIFT);
+                    $retval += (Tables::$TOP_CARDS_TABLE[$t] << 8);
                     return $retval;
                 }
 
@@ -139,7 +139,7 @@ class Evaluate {
                     $retval += ($top << 16);
                     $second = Tables::$TOP_CARDS_TABLE[$two_mask ^ (1 << $top)];
                     $retval += ($second << 12);
-                    $retval += ((Tables::$TOP_CARDS_TABLE[$ranks ^ (1 << $top) ^ (1 << $second)]) << $THIRD_CARD_SHIFT);
+                    $retval += ((Tables::$TOP_CARDS_TABLE[$ranks ^ (1 << $top) ^ (1 << $second)]) << 8);
                     return $retval;
                 }
         }

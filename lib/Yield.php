@@ -32,7 +32,7 @@ class Yield {
         switch ($numberOfCards - self::bitCount($shared))
         {
             case 7:
-                for ($i1 = $numberOfCards - 1; $i1 >= 0; $i1--)
+                for ($i1 = 51; $i1 >= 0; $i1--)
                 {
                     $card1 = Tables::$CARD_MASKS_TABLE[$i1];
                     if (($dead & $card1) != 0) continue;
@@ -76,7 +76,7 @@ class Yield {
                 }
                 break;
             case 6:
-                for ($i1 = $numberOfCards - 1; $i1 >= 0; $i1--)
+                for ($i1 = 51; $i1 >= 0; $i1--)
                 {
                     $card1 = Tables::$CARD_MASKS_TABLE[$i1];
                     if (($dead & $card1) != 0) continue;
@@ -114,7 +114,8 @@ class Yield {
                 }
                 break;
             case 5:
-                for ($i1 = $numberOfCards - 1; $i1 >= 0; $i1--)
+                echo "Here";
+                for ($i1 = 51; $i1 >= 0; $i1--)
                 {
                     $card1 = Tables::$CARD_MASKS_TABLE[$i1];
                     if (($dead & $card1) != 0) continue;
@@ -145,7 +146,7 @@ class Yield {
                 }
                 break;
             case 4:
-                for ($i1 = $numberOfCards - 1; $i1 >= 0; $i1--)
+                for ($i1 = 51; $i1 >= 0; $i1--)
                 {
                     $card1 = Tables::$CARD_MASKS_TABLE[$i1];
                     if (($dead & $card1) != 0) continue;
@@ -171,7 +172,7 @@ class Yield {
 
                 break;
             case 3:
-                for ($i1 = $numberOfCards - 1; $i1 >= 0; $i1--)
+                for ($i1 = 51; $i1 >= 0; $i1--)
                 {
                     $card1 = Tables::$CARD_MASKS_TABLE[$i1];
                     if (($dead & $card1) != 0) continue;

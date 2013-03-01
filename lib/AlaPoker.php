@@ -17,6 +17,9 @@ require_once("Evaluate.php");
 require_once("Yield.php");
 
 class AlaPoker {
+    // Players
+    private $players = 2;
+
 	// Array of masks, each player
 	private $hands = array();
 
@@ -29,7 +32,7 @@ class AlaPoker {
 	// Resulting arrays
 	private $wins = array();
 	private $ties = array();
-	private $loss = array();
+	private $losses = array();
 	private $totalHands = 0;
 
 	/**
@@ -39,27 +42,23 @@ class AlaPoker {
 		$this->hands = Hands::parse($hands, true);
 		$this->board = Hands::parse($board);
 		$this->deads = Hands::parse($deads);
-		for($i = 0;$i < count($this->hands); $i++){
+        $this->players = count($this->hands);
+		for($i = 0;$i < $this->players; $i++){
 			$this->deads |= $this->hands[$i];
 		}
 	}
 
 	public function getOdds() {
-		/*
-		var_dump(iterator_to_array(Yield::generate(intval($this->board), intval($this->deads), 5)));
-		return $this->hands . ":" . $this->deads;
-		*/
 
-        $totalhands = 0;
 		foreach (Yield::get(intval($this->board), intval($this->deads), 5) as $boardhand)
-        {
+        {   
             // Evaluate all hands and determine the best hand
-            $bestpocket = Evaluate::evaluate7($this->$hands[0] | $boardhand, 7);
+            $bestpocket = Evaluate::evaluate7($this->hands[0] | $boardhand, 7);
             $pockethands[0] = $bestpocket;
             $bestcount = 1;
-            for ($i = 1; $i < count($pockets); $i++)
+            for ($i = 1; $i < $this->players; $i++)
             {
-                $pockethands[$i] = Evaluate::evaluate7($this->$hands[$i] | $boardhand, 7);
+                $pockethands[$i] = Evaluate::evaluate7($this->hands[$i] | $boardhand, 7);
                 if ($pockethands[$i] > $bestpocket)
                 {
                     $bestpocket = $pockethands[$i];
@@ -71,37 +70,50 @@ class AlaPoker {
                 }
             }
 
-            // Calculate $wins/$ties/loses for each pocket + board combination.
-            for ($i = 0; $i < $this->$players; $i++)
-            {
+            // Calculate wins, ties and losses for each pocket + board combination.
+            for ($i = 0; $i < $this->players; $i++)
+            {   
+                if(!isset($this->wins[$i])) {
+                    $this->wins[$i] = 0;
+                }
+
+                if(!isset($this->ties[$i])) {
+                    $this->ties[$i] = 0;
+                }
+
+                if(!isset($this->losses[$i])) {
+                    $this->losses[$i] = 0;
+                }
+
                 if ($pockethands[$i] == $bestpocket)
                 {
                     if ($bestcount > 1)
                     {
-                        $ties[$i]++;
+                        $this->ties[$i]++;
                     }
                     else
                     {
-                        $wins[$i]++;
+                        $this->wins[$i]++;
                     }
                 }
                 else if ($pockethands[$i] < $bestpocket)
                 {
-                    $losses[$i]++;
+                    $this->losses[$i]++;
                 }
             }
 
-            $this->$totalHands++;
+            $this->totalHands++;
         }
 
         // Odds of winning as a percentage for each player
         $odds = array();
-        if ($totalhands != 0)
+        if ($this->totalHands != 0)
         {   
-            for ($i = 0; $i < $this->$players; $i++) {
-                $odds[$i] = ($wins[$i] + $ties[$i]) / 2.0 / $this->$totalHands;
+            for ($i = 0; $i < $this->players; $i++) {
+                $odds[$i] = ($this->wins[$i] + $this->ties[$i]) / 2.0 / $this->totalHands;
             }
         }
+        var_dump('wins:' . print_r($this->wins, true) . 'ties:' . print_r($this->ties, true) . 'losses:' . print_r($this->losses, true));
         return $odds;
 	}
 }
