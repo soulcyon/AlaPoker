@@ -8,6 +8,8 @@
  * @license    All rights reserved
  */
 class Yield {
+    private static $yieldedResult = array();
+
     private static function bitCount($i){
         return
             Tables::$BITS_TABLE[$i & 0x00000000000000FF] +
@@ -19,7 +21,13 @@ class Yield {
             Tables::$BITS_TABLE[($i & 0x00FF000000000000) >> 48] +
             Tables::$BITS_TABLE[($i & 0xFF00000000000000) >> 56];
     }
-	public static function generate($shared, $dead, $numberOfCards) {
+
+    public static function get($s, $d, $n){
+        self::generate($s, $d, $n);
+        return self::$yieldedResult;
+    }
+
+    public static function generate($shared, $dead, $numberOfCards) {
         $dead |= $shared;
         switch ($numberOfCards - self::bitCount($shared))
         {
@@ -58,7 +66,7 @@ class Yield {
                                             $card7 = Tables::$CARD_MASKS_TABLE[$i7];
                                             if (($dead & $card7) != 0) continue;
                                             $result = $n6 | $card7 | $shared;
-                                            return $result;
+                                            self::$yieldedResult[] = $result;
                                         }
                                     }
                                 }
@@ -97,7 +105,7 @@ class Yield {
                                         $card6 = Tables::$CARD_MASKS_TABLE[$i6];
                                         if (($dead & $card6) != 0)
                                             continue;
-                                        return $n5 | $card6 | $shared;
+                                        self::$yieldedResult[] = $n5 | $card6 | $shared;
                                     }
                                 }
                             }
@@ -129,7 +137,7 @@ class Yield {
                                 {
                                     $card5 = Tables::$CARD_MASKS_TABLE[$i5];
                                     if (($dead & $card5) != 0) continue;
-                                    return $n4 | $card5 | $shared;
+                                    self::$yieldedResult[] = $n4 | $card5 | $shared;
                                 }
                             }
                         }
@@ -155,7 +163,7 @@ class Yield {
                             {
                                 $card4 = Tables::$CARD_MASKS_TABLE[$i4];
                                 if (($dead & $card4) != 0) continue;
-                                return $n3 | $card4 | $shared;
+                                self::$yieldedResult[] = $n3 | $card4 | $shared;
                             }
                         }
                     }
@@ -176,7 +184,7 @@ class Yield {
                         {
                             $card3 = Tables::$CARD_MASKS_TABLE[$i3];
                             if (($dead & $card3) != 0) continue;
-                            return $n2 | $card3 | $shared;
+                            self::$yieldedResult[] = $n2 | $card3 | $shared;
                         }
                     }
                 }
@@ -187,7 +195,7 @@ class Yield {
                 {
                     $card1 = Tables::$TWO_CARD_TABLE[$i1];
                     if (($dead & $card1) != 0) continue;
-                    return $card1 | $shared;
+                    self::$yieldedResult[] = $card1 | $shared;
                 }
                 break;
             case 1:
@@ -196,14 +204,14 @@ class Yield {
                 {
                     $card1 = Tables::$CARD_MASKS_TABLE[$i1];
                     if (($dead & $card1) != 0) continue;
-                    return $card1 | $shared;
+                    self::$yieldedResult[] = $card1 | $shared;
                 }
                 break;
             case 0:
-                return $shared;
+                self::$yieldedResult[] = $shared;
                 break;
             default:
-                return 0;
+                self::$yieldedResult[] = 0;
                 break;
         }
     }
