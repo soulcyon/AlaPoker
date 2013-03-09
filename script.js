@@ -8,12 +8,6 @@ $(document).ready(function(){
 		}, function(d){
 			$("#init").hide();
 			$("#game").show().find(".content").html(d);
-			$(".hand img").each(function(i,e){
-				hands += " " + $(this).attr("alt");
-			});
-			$(".content > img:not(.burn)").each(function(i, e){
-				board += " " + $(this).attr("alt");
-			});
 		});
 	});
 	function getProbs(d){
@@ -29,8 +23,16 @@ $(document).ready(function(){
 		}
 	}
 	$(document).delegate("#pre", "click", function(){
+		hands = board = "";
+		$(".hand img").each(function(i,e){
+			hands += ($("#flag").is(":checked") && !(i % 2) ? "," : " ") + $(this).attr("alt");
+		});
+		$(".content > img:not(.burn)").each(function(i, e){
+			board += " " + $(this).attr("alt");
+		});
 		$("button").attr("disabled", true);
 		$.post("game.php", {
+			c: $("#flag").is(":checked"),
 			h: hands.substring(1),
 			b: "",
 			d: "",
@@ -38,29 +40,63 @@ $(document).ready(function(){
 		}, getProbs);
 	});
 	$(document).delegate("#flop", "click", function(){
+		hands = board = dead = "";
+		$(".hand img").each(function(i,e){
+			hands += ($("#flag").is(":checked") && !(i % 2) ? "," : " ") + $(this).attr("alt");
+		});
+		$(".content > img:not(.burn)").each(function(i, e){
+			board += " " + $(this).attr("alt");
+		});
+		$(".panel .back img").each(function(i, e){
+			dead += " " + $(this).attr("alt");
+		});
 		$("button").attr("disabled", true);
 		$.post("game.php", {
+			c: $("#flag").is(":checked"),
 			h: hands.substring(1),
 			b: board.substring(1, 9),
-			d: $("#dead").val().substring(0, 2),
+			d: dead.substring(1, 3),
 			calc: true
 		}, getProbs);
 	});
 	$(document).delegate("#turn", "click", function(){
+		hands = board = dead = "";
+		$(".hand img").each(function(i,e){
+			hands += ($("#flag").is(":checked") && !(i % 2) ? "," : " ") + $(this).attr("alt");
+		});
+		$(".content > img:not(.burn)").each(function(i, e){
+			board += " " + $(this).attr("alt");
+		});
+		$(".panel .back img").each(function(i, e){
+			dead += " " + $(this).attr("alt");
+		});
 		$("button").attr("disabled", true);
 		$.post("game.php", {
+			c: $("#flag").is(":checked"),
 			h: hands.substring(1),
 			b: board.substring(1, 12),
-			d: $("#dead").val().substring(0, 5),
+			d: dead.substring(1, 6),
 			calc: true
 		}, getProbs);
 	});
 	$(document).delegate("#river", "click", function(){
+		hands = board = dead = "";
+		$(".hand img").each(function(i,e){
+			hands += " " + $(this).attr("alt");
+		});
+		$(".content > img:not(.burn)").each(function(i, e){
+			board += " " + $(this).attr("alt");
+		});
+		$(".panel .back img").each(function(i, e){
+			dead += " " + $(this).attr("alt");
+		});
 		$("button").attr("disabled", true);
 		$.post("game.php", {
+			c: $("#flag").is(":checked"),
 			h: hands.substring(1),
 			b: board.substring(1),
-			d: $("#dead").val(),
+			d: dead.substring(1),
+			r: "true",
 			calc: true
 		}, getProbs);
 	});

@@ -1,14 +1,25 @@
 <?php
-	
 	error_reporting(E_ALL);
+	ini_set("pokenum.iterations", 100000);
 	ini_set("display_errors", true);
 	session_start();
 
-	if(isset($_POST["calc"]) && $_POST["calc"] == true){
+	if(isset($_POST["calc"]) && $_POST["calc"] == "true"){
 		Header("Content-type: application/json");
-		require_once("lib/AlaPoker.php");
-		$ala = new AlaPoker($_POST["h"], $_POST["b"], $_POST["d"]);
-		die(json_encode($ala->getOdds()));
+		if( isset($_POST["c"]) && $_POST["c"] == "true" && !isset($_POST["r"]) ){
+			$r = pokenum(PN_TEXAS, explode(",",$_POST["h"]), $_POST["b"], $_POST["d"]);
+			$wins = array();
+			$ties = array();
+			foreach($r["hands"] as $hand){
+				$wins[] = $hand["win"];
+				$ties[] = $hand["tie"];
+			}
+			die(json_encode(array("wins" => $wins, "ties" => $ties, "total" => $r["iterations"])));
+		} else {
+			require_once("lib/AlaPoker.php");
+			$ala = new AlaPoker($_POST["h"], $_POST["b"], $_POST["d"]);
+			die(json_encode($ala->getOdds()));
+		}
 	}
 
 	if(!isset($_POST['players'])) {
@@ -32,8 +43,7 @@
 	echo "<button id='pre'>P</button>";
 	echo "<button id='flop'>F</button>";
 	echo "<button id='turn'>T</button>";
-	echo "<button id='river'>R</button><br /><br />";
-	echo "<img src='Cards/Back.png' class='burn community' />";
+	echo "<button id='river'>R</button><br />Use Monte Carlo: <input type='checkbox' id='flag' /><br />";
 
 	flop();
 	bet();
@@ -46,7 +56,13 @@
 	endGame();
 	payout();
 
-	echo "<input type='hidden' id='dead' value='" . implode(' ', $dead) . "' />";
+	echo "<br /><div class='panels'><div class='panel'><div class='front'><img src='Cards/Back.png' class='burn community' /></div>";
+	echo "<div class='back'><img src='Cards/$dead[0].png' alt='$dead[0]' class='burn community' /></div></div>";
+	echo "<div class='panel'><div class='front'><img src='Cards/Back.png' class='burn community' /></div>";
+	echo "<div class='back'><img src='Cards/$dead[1].png' alt='$dead[1]' class='burn community' /></div></div>";
+	echo "<div class='panel'><div class='front'><img src='Cards/Back.png' class='burn community' /></div>";
+	echo "<div class='back'><img src='Cards/$dead[2].png' alt='$dead[2]' class='burn community' /></div></div></div>";
+	//echo "<input type='hidden' id='dead' value='" . implode(' ', $dead) . "' />";
 	
 
 	function buildDeck() {
