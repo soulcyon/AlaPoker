@@ -16,7 +16,7 @@
 			}
 			die(json_encode(array("wins" => $wins, "ties" => $ties, "total" => $r["iterations"])));
 		} else {
-			require_once("lib/AlaPoker.php");
+			require_once("beta/inc/AlaPoker.php");
 			$ala = new AlaPoker($_POST["h"], $_POST["b"], $_POST["d"]);
 			die(json_encode($ala->getOdds()));
 		}
