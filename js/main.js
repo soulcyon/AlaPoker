@@ -1,9 +1,28 @@
 $(document).ready(function(){
-	var AJAX_SCRIPT = "./";
+	var AJAX_SCRIPT = "./",
+		LOGIN_SCRIPT = "./login.php";
 	$.post(AJAX_SCRIPT, {
 		type: "game",
 		cacheBust: new Date()
 	});
+
+	// Load user data
+	$.post(LOGIN_SCRIPT, {
+		type: "isLoggedIn"
+	}, function(d){
+		if( d !== true ){
+			return $("header .right").html($("<a />").attr("href", "./login.php?type=doLogin").html("<button><a href=\"login.php?type=showLogin\">Login</a></button>"));
+		}
+		$("header .right").html("Gathering your information...");
+		$.post(LOGIN_SCRIPT, {
+			type: "getData"
+		}, function(d){
+			$("header .right").empty().append(
+				$("<span />").addClass("email").html(d.email),
+				$("<span />").addClass("amount").html(d.balance)
+			);
+		})
+	})
 
 	var game_start = false,
 		push_flag = false,
@@ -47,6 +66,7 @@ $(document).ready(function(){
 	});
 	$("#load_game").bind("click", function(){
 		if( ajax_flag ) return;
+		return alert("Coming soon");
 
 		ajax_flag = true;
 		$.post(AJAX_SCRIPT, {
@@ -185,6 +205,11 @@ $(document).ready(function(){
 			addDead(d.dead);
 			updateOdds(d.odds, d.mults);
 
+			var n = parseInt($(".right span.amount").html());
+			$(".right span.amount").animateNumber(n + d.payout, {
+				duration: 2000,
+				animateOpacity: false
+			});
 			$(".message").html("<button class=\"restart\">New Game</button>");
 		});
 	});
@@ -207,13 +232,9 @@ $(document).ready(function(){
 		});
 	}).hide();
 	$(".payout").bind("click", function(){
-		$.post(AJAX_SCRIPT, {
-			type: "history"
-		}, function(d){
-			$("#payout_table").html(d).modal({
-				zIndex: 100000
-			});
-		})
+		$("#payout_table").modal({
+			zIndex: 100000
+		});
 	}).hide();
 
 	// Initialize Modal
@@ -226,9 +247,11 @@ $(document).ready(function(){
 		if( ajax_flag ) return;
 
 		ajax_flag = true;
-		var betAmounts = "";
+		var betAmounts = "",
+			totalBets = 0;
 		$("#bet_table input").each(function(i,e){
 			betAmounts += " " + $(e).val();
+			totalBets += parseInt($(e).val()) || 0;
 		});
 		betAmounts = betAmounts.substring(1).split(" ");
 		$.ajax(AJAX_SCRIPT, {
@@ -243,6 +266,11 @@ $(document).ready(function(){
 					var err = $.parseJSON(d.responseText).error;
 					alert(err);
 				} else {
+					var n = parseInt($(".right span.amount").html());
+					$(".right span.amount").animateNumber(n - totalBets, {
+						duration: 2000,
+						animateOpacity: false
+					});
 					$(".bet_placeholder").html(
 						$("<button />").addClass(hands < 5 ? "riverPush" : "flop").html(hands < 5 ? "River" : "Flop")
 					);
@@ -258,9 +286,9 @@ $(document).ready(function(){
 	
 	function reset_game(){
 		$(".hole").remove();
-		$(".bet").hide();
+		$(".bet, .payout").hide();
 		$(".ui").show();
-		$("#bet_table tbody").empty();
+		$("#bet_table tbody, #payout_table tbody").empty();
 		game_start = false;
 		shuffle_loop(0);
 	}
@@ -296,6 +324,16 @@ $(document).ready(function(){
 						$("<td />").html(round(arr.wins[i]/arr.total) + "%"),
 						$("<td />").html(Math.round(m[i]*10)/10 + "x"),
 						$("<td />").html("<input type=\"number\" />")
+					)
+				);
+
+				// Payout setup
+				$("#payout_table tbody").append(
+					$("<tr />").append(
+						$("<td />").append(
+							$("<span " + init[i][0][1].toLowerCase() + "/>").html(init[i][0][0]),
+							$("<span " + init[i][1][1].toLowerCase() + "/>").html(init[i][1][0])
+						)
 					)
 				);
 
