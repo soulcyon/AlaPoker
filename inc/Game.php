@@ -1,4 +1,9 @@
 <?php
+require_once "db.php";
+function query($st){
+	$db = new PDO("mysql:host=localhost;dbname=alapoker", DB_USER, DB_PASS);
+	return $db->query($st);
+}
 class Game {
 	// Generic globals
 	private $kinds = array("2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A");
@@ -34,7 +39,7 @@ class Game {
 		$this->board = isset($_SESSION["board"]) ? $_SESSION["board"] : array();
 		$this->dead = isset($_SESSION["dead"]) ? $_SESSION["dead"] : array();
 		$this->mults = isset($_SESSION["mults"]) ? $_SESSION["mults"] : array();
-		$this->amounts = isset($_SESSION["mults"]) ? $_SESSION["mults"] : array();
+		$this->amounts = isset($_SESSION["amounts"]) ? $_SESSION["amounts"] : array();
 
 		$this->pushHandle("pre-flop", function($post){
 			if($post["players"] < 2 || $post["players"] > 10)
@@ -97,6 +102,10 @@ class Game {
 
 			$this->turn();
 
+			if( count($this->amounts) == 1 ){
+				$this->amounts[] = array();
+			}
+
 			$odds = $this->getOdds();
 			$this->getMultipliers($odds);
 
@@ -111,6 +120,8 @@ class Game {
 			$this->state++;
 		});
 		$this->pushHandle("river", function(){
+			global $db;
+
 			$blank = array(0, "", false, null);
 			$preFlopCount = count(array_diff($this->amounts[0], $blank));
 
@@ -119,6 +130,10 @@ class Game {
 
 			$this->river();
 
+			if( count($this->amounts) == 2 ){
+				$this->amounts[] = array();
+			}
+
 			// Win calculation
 			require_once("inc/AlaPoker.php");
 			$this->hands = "";
@@ -126,24 +141,61 @@ class Game {
 				$this->hands .= " " . implode(" ", $h);
 			}
 			$ala = new AlaPoker(substr($this->hands, 1), implode(" ", $this->board), implode(" ", $this->dead));
+			$odds = $ala->getOdds();
+
+			// Payout
+			$pay_out = 0;
+			for($i = 0; $i < count($odds["wins"]); $i++){
+				if( floor($odds["wins"][$i]) != 0 ){
+					for($j = 0; $j < 3; $j++){
+						if( isset($this->amounts[$j]) && isset($this->amounts[$j][$i]) ){
+							$pay_out += $this->amounts[$j][$i] * $this->mults[$j][$i];
+						}
+					}
+				}
+			}
+
+			// DB Push
+			$email = $_SESSION["user"];
+			query("UPDATE `users` SET `balance` = `balance` + $pay_out WHERE `username` = '$email'");
 
 			echo json(array(
-				"board" => array($this->board[4]),
-				"dead" => array($this->dead[2]),
-				"odds" => $ala->getOdds())
+					"board" => array($this->board[4]),
+					"dead" => array($this->dead[2]),
+					"odds" => $ala->getOdds(),
+					"mults" => $this->mults,
+					"amounts" => $this->amounts,
+					"payout" => $pay_out
+				)
 			);
 		});
 		$this->pushHandle("bet", function($post){
+			global $db;
+
 			if(count($post["amounts"]) != $this->players){
 				die(json(array("error" => "Invalid number of bets.")));
 			}
 			
 			$blank = array(0, "", false, null);
+			$email = $_SESSION["user"];
 			$candidateAmounts = $post["amounts"];
+			$totalBet = 0;
 
+			// Assert positive integers
 			foreach($candidateAmounts as $amt)
-				if($amt && !is_numeric($amt))
-					die(json(array("error" => "Invalid bet amount.")));
+				if($amt && is_numeric($amt)){
+					if($amt < 0)
+						die(json(array("error" => "Invalid bet amount.")));
+					$totalBet += intval($amt);
+				}
+
+			$q = query("SELECT `balance` FROM `users` WHERE `username` = '$email'");
+			$rows = $q->fetchAll();
+			
+			// Assert non-empty bets and available balance
+			if( $totalBet === 0 || $totalBet > intval($rows[0][0]) ){
+				die(json(array("error" => "Invalid bet amount.")));
+			}
 
 			$betCount = count(array_diff($candidateAmounts, $blank));
 
@@ -153,13 +205,15 @@ class Game {
 			// Required to have 1 bet on pre-flop
 			if( $betCount >= 1 && $betCount <= $this->allowed ){
 				if( $this->state >= 0 ){
-					$this->amounts[$this->state] = $post["amounts"];
+					// Update DB
+					query("UPDATE `users` SET `balance` = `balance` - $totalBet WHERE `username` = '$email'");
+
+					// Update game variables
+					$this->amounts[$this->state - 1] = $post["amounts"];
 					$this->allowed -= $betCount;
 				}
 			}
-		});
-		$this->pushHandle("history", function(){
-			echo json($this->amounts);
+			var_dump($this->amounts);
 		});
 
 		$this->handles[$type]($post);

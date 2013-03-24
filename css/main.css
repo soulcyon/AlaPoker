@@ -166,6 +166,10 @@ button.player {
     width: 40px;
     padding: 4px;
 }
+a:active, a:hover, a:visited, a {
+    color: #333;
+    text-decoration: none;
+}
 button {
     cursor: pointer;
     outline: none;
@@ -221,9 +225,21 @@ header button {
 }
 header .right {
     float: right;
-    width: 200px;
+    width: 500px;
     text-align: right;
     margin-top: 5px;
+}
+header .right .email {
+    padding-right: 10px;
+    font-size: 90%;
+    color: #8f8f8f;
+    vertical-align: top;
+    line-height: 20px;
+}
+header .right .email:before {
+    content: "Welcome, ";
+    vertical-align: top;
+    line-height: 20px;
 }
 header .right .amount {
     vertical-align: top;
@@ -237,13 +253,20 @@ header .right .amount:before {
     content: ' ';
     vertical-align: top;
 }
+#payout_table {
+    width: 600px;
+}
+#payout_table td {
+    width: 20%;
+    text-align: center;
+}
 #bet_table {
     width: 450px;
 }
 #bet_table td {
     width: 25%;
 }
-#bet_table td > span {
+table td > span {
     display: inline-block;
     width: 32px;
     line-height: 30px;
@@ -251,9 +274,12 @@ header .right .amount:before {
     font-weight: bold;
     font-size: 110%;
     padding-left: 5px;
+    text-align: left;
 }
 #bet_table td > input {
     padding: 3px;
+    outline: 0;
+    border: 1px solid black;
 }
 #bet_table td > input:before {
     content: "$";
@@ -263,23 +289,22 @@ header .right .amount:before {
     position: relative;
     left: 10px;
 }
-#bet_table td > span:nth-child(1) {
+table td > span:nth-child(1) {
     padding-left: 0px;
 }
-
-#bet_table td > span[d], #bet_table td > span[h] {
+table td > span[d], table td > span[h] {
     color: red;
 }
-#bet_table td > span[d] {
+table td > span[d] {
     background: url(../img/D.png) no-repeat center right;
 }
-#bet_table td > span[s] {
+table td > span[s] {
     background: url(../img/S.png) no-repeat center right;
 }
-#bet_table td > span[c] {
+table td > span[c] {
     background: url(../img/C.png) no-repeat center right;
 }
-#bet_table td > span[h] {
+table td > span[h] {
     background: url(../img/H.png) no-repeat center right;
     color: red;
 }
@@ -300,7 +325,7 @@ header .right .amount:before {
     width: 100%;
     text-align: center;
 }
-.bet {
+.bet, .payout {
     position: absolute;
     top: 10px;
     left: 500px;
@@ -441,6 +466,26 @@ header .right .amount:before {
     -webkit-animation-timing-function: linear;
 }
 
+p.facebook {
+    display: inline-block;
+    border-radius: 3px;
+    color: #d0d5cb;
+    font-weight: normal;
+    text-align: center;
+    background-color: #30487b;
+    padding: 10px;
+    padding-left: 30px;
+}
+p.facebook span[f] {
+    display: inline-block;
+    width: 11px;
+    height: 21px;
+    margin-left: -15px;
+    margin-right: 10px;
+    line-height: 21px;
+    vertical-align: middle;
+    background: url(https://d297h9he240fqh.cloudfront.net/cache-f8e503efc/images/compass/pledges/thanks/facebook.png) no-repeat center center;
+}
 .h0 {
     top: -60px;
     left: -150px;
