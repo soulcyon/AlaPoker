@@ -131,9 +131,9 @@ abstract class BaseFacebook
    * Default options for curl.
    */
   public static $CURL_OPTS = array(
-    CURLOPT_CONNECTTIMEOUT => 10,
+    CURLOPT_CONNECTTIMEOUT => 2,
     CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT        => 60,
+    CURLOPT_TIMEOUT        => 10,
     CURLOPT_USERAGENT      => 'facebook-php-3.2',
   );
 
@@ -881,7 +881,6 @@ abstract class BaseFacebook
       // @codeCoverageIgnoreStart
     }
     // @codeCoverageIgnoreEnd
-
     return $result;
   }
 
@@ -924,29 +923,25 @@ abstract class BaseFacebook
     if (!$ch) {
       $ch = curl_init();
     }
-
     $opts = self::$CURL_OPTS;
-    if ($this->getFileUploadSupport()) {
-      $opts[CURLOPT_POSTFIELDS] = $params;
-    } else {
-      $opts[CURLOPT_POSTFIELDS] = http_build_query($params, null, '&');
-    }
+    $opts[CURLOPT_POSTFIELDS] = http_build_query($params, null, '&');
     $opts[CURLOPT_URL] = $url;
 
     // disable the 'Expect: 100-continue' behaviour. This causes CURL to wait
     // for 2 seconds if the server does not support this header.
     if (isset($opts[CURLOPT_HTTPHEADER])) {
       $existing_headers = $opts[CURLOPT_HTTPHEADER];
-      $existing_headers[] = 'Expect:';
+      $existing_headers[] = 'Expect: ';
       $opts[CURLOPT_HTTPHEADER] = $existing_headers;
     } else {
-      $opts[CURLOPT_HTTPHEADER] = array('Expect:');
+      $opts[CURLOPT_HTTPHEADER] = array('Expect: ');
     }
-
+    
     curl_setopt_array($ch, $opts);
+    $time = microtime(1);
     $result = curl_exec($ch);
 
-    if (curl_errno($ch) == 60) { // CURLE_SSL_CACERT
+    if (curl_errno($ch) == 60) {
       self::errorLog('Invalid or no certificate authority found, '.
                      'using bundled information');
       curl_setopt($ch, CURLOPT_CAINFO,

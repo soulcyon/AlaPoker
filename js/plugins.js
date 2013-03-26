@@ -754,7 +754,7 @@ var defaults = {
 };
     
 function round(number, decimals) {
-    return Math.round(number*Math.pow(10,decimals))/Math.pow(10,decimals);
+    return Math.round(number*Math.pow(10,decimals))/Math.pow(10,decimals) + "";
 }
 
 function isInt(number) {
@@ -770,7 +770,7 @@ $.fn.animateNumber = function(value, options, callback) {
     
     return this.each(function () {
         var container = $(this);
-        var initialValue = parseFloat($(this).text(), 10);
+        var initialValue = parseFloat($(this).text().replace(/,/g, ""), 10);
         if (round(value, options.floatEndDecimals) == round(initialValue, options.floatEndDecimals)) {
             return;
         }
@@ -805,10 +805,10 @@ $.fn.animateNumber = function(value, options, callback) {
             duration: options.duration,
             easing: options.easing, 
             step: function() {
-                container.text(round(this.number, stepDecimals));
+                container.text(round(this.number, stepDecimals).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
             },
             complete: function() {
-                container.text(round(this.number, endDecimals));
+                container.text(round(this.number, endDecimals).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
                 if (typeof options.callback === "function") {
                     options.callback.call(container);
                 }
