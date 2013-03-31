@@ -1,34 +1,70 @@
+/*
+TODO
+================
+DONE| Unlimited bets per hand
+DONE| Max bet <= sum of all previous bets
+- * Show reset button on River
+DONE| Word wrap on bet_table
+DONE| bet_table graphics
+DONE| Display bets made
+DONE| "You win" < 0, show "You Lose"
+
+*/
 $(document).ready(function(){
-	var AJAX_SCRIPT = "./",
-		LOGIN_SCRIPT = "./login.php";
+	var AJAX_SCRIPT = "/",
+		LOGIN_SCRIPT = "/login/";
+
+	$("#new_game, #load_game").addClass("hidden");
+
 	$.post(AJAX_SCRIPT, {
 		type: "game",
 		cacheBust: new Date()
 	});
 
-	// Load user data
+	// Check login and load user data
 	$.post(LOGIN_SCRIPT, {
 		type: "isLoggedIn"
 	}, function(d){
-		if( d !== true ){
-			return $("header .right").html("<a href=\"login.php?type=showLogin\"><button>Login</button></a>");
+		if( d.result === -1 ){
+			var nick = prompt("Please enter a public nickname for your account: ", "");
+			if( nick === null ) nick = "New User";
+			$(".right .email").html(nick);
+			$.post(LOGIN_SCRIPT, {
+				type: "nick",
+				nick: nick
+			});
+		} else if( d.result !== true ){
+			return $("header .right").html("<a href=\"/login/\" class=\"button\">Login</a>");
 		}
+
+		can_play = true;
+		$("#new_game, #load_game").removeClass("hidden");
 		$("header .right").html("Gathering your information...");
+
 		$.post(LOGIN_SCRIPT, {
 			type: "getData"
 		}, function(d){
 			$("header .right").empty().append(
-				$("<span />").addClass("email").html(d.email),
-				$("<span />").addClass("amount").html(d.balance.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"))
+				$("<span />").addClass("email").html(d.nickname),
+				$("<span />").addClass("amount").html(d.balance.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")),
+				$("<a />").attr({"href": "/logout/", "id":"logout"}).addClass("button").html("Logout").click(function(e){
+					navigator.id.logout();
+					$("#close_game").click();
+					e.stopPropagation();
+					return false;
+				})
 			);
 		})
-	})
+	});
 
+	// Login loop
 	var game_start = false,
 		push_flag = false,
 		ajax_flag = false,
 		placed_bet = false,
+		can_play = false,
 		hands = 0,
+		state = 0,
 		shuffle_loop = function(j){
 			if( game_start ) return;
 			if( j > 32 ) return;
@@ -51,6 +87,7 @@ $(document).ready(function(){
 		};
 
 	$("#new_game").bind("click", function(){
+		if( !can_play ) return alert("Please login to start a new game!");
 		if( ajax_flag ) return;
 
 		var closing = $("#float").hasClass("switched");
@@ -64,6 +101,7 @@ $(document).ready(function(){
 		}
 	});
 	$("#load_game").bind("click", function(){
+		if( !can_play ) return alert("Please login to load a game!");
 		if( ajax_flag ) return;
 		return alert("Coming soon");
 
@@ -77,13 +115,17 @@ $(document).ready(function(){
 		})
 	});
 	$("#close_game").bind("click", function(){
+		if( !can_play ) return alert("Please login to start a new game!");
+
 		reset_game();
-		$("#new_game").trigger("click");
+		if( $("#close_game").is(":visible") )
+			$("#new_game").trigger("click");
 	});
 	$("button.player").bind("click", function(){
 		if( ajax_flag ) return;
 
 		ajax_flag = true;
+		$("button.player").attr("disabled", true);
 		hands = parseInt($(this).html());
 		shuffle_loop(0);
 		$.post(AJAX_SCRIPT, {
@@ -93,6 +135,7 @@ $(document).ready(function(){
 		}, function(d){
 			ajax_flag = false;
 			game_start = true;
+			state = 0;
 
 			addHands(d.hole);
 			updateOdds(d.odds, d.mults, d.hole);
@@ -134,13 +177,15 @@ $(document).ready(function(){
 				})
 			});
 			$(".ui").hide();
-			$(".message").html("<span class=\"bet_placeholder\">You must place bets pre-flop</span>!");
+			$(".message").html("<span class=\"bet_placeholder\">You must place bets pre-flop</span>");
 		});
 	});
+	
 	$(document).delegate("button.flop", "click", function(){
 		if( ajax_flag ) return;
 
 		ajax_flag = true;
+		$(this).attr("disabled", true);
 		if( hands < 5 )
 			$(".bet").hide();
 
@@ -153,7 +198,6 @@ $(document).ready(function(){
 			addBoard(d.board);
 			addDead(d.dead);
 			updateOdds(d.odds, d.mults);
-			console.log($(".push.turn"))
 			if( push_flag ) {
 				$(".push.turn").trigger("click");
 			} else {
@@ -165,6 +209,7 @@ $(document).ready(function(){
 		if( ajax_flag ) return;
 		
 		ajax_flag = true;
+		$(this).attr("disabled", true);
 		if( hands < 5 )
 			$(".bet").hide();
 
@@ -189,8 +234,7 @@ $(document).ready(function(){
 		if( ajax_flag ) return;
 
 		ajax_flag = true;
-		$(".bet button").html("Show bets");
-
+		$(this).attr("disabled", true);
 		$.post(AJAX_SCRIPT, {
 			type: "river",
 			cacheBust: new Date()
@@ -201,21 +245,22 @@ $(document).ready(function(){
 			addDead(d.dead);
 			updateOdds(d.odds, d.mults);
 
+			$(".bet button").html("Show bets");
 			var n = parseInt($(".right span.amount").html().replace(/,/g, "")),
-				win = Math.round(d.payout),
+				win = Math.floor(d.payout),
 				p1 = $("<div />").addClass("winout").html((win + "").replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")),
-				p2 = $("<div />").addClass("wintitle").html("You Win!");
+				p2 = $("<div />").addClass("wintitle").html("Payout");
+			$(".floor").append(p2);
 			if( win > 0 ){
-				$(".floor").append(p1, p2);
-				p2.css({
-					top: (($(window).height() - p2.outerHeight()) / 2) - 40 + "px",
-					left: (($(window).width() - p2.outerWidth()) / 2) + "px",
-					zIndex: 10240126
-				});
-				p1.css({
+				$(".floor").append(p1);
+				p2.css("width", p1.width() + "px").transition({
+					top: (($(window).height() - p2.outerHeight()) / 2) - 93 + "px",
+					left: (($(window).width() - p2.outerWidth()) / 2) + "px"
+				},1);
+				p1.transition({
 					top: (($(window).height() - p1.outerHeight()) / 2) + "px",
 					left: (($(window).width() - p1.outerWidth()) / 2) + "px"
-				}).animate({
+				},1).animate({
 					zIndex: 10240125
 				}, 3000, function(){
 					p2.animate({opacity: 0}, 500);
@@ -229,7 +274,7 @@ $(document).ready(function(){
 						color: "#AFAFAF",
 						fontSize: "16px",
 						padding: "0px",
-						background: "rgba(0, 0, 0, 0)",
+						backgroundColor: "#086264",
 						opacity: 0
 					}, 2000, function(){
 						p2.remove();
@@ -241,12 +286,24 @@ $(document).ready(function(){
 						floatStepDecimals: 0
 					});
 				})
+			} else {
+				p2.addClass("losetitle")
+				.html("You Lose!")
+				.css({
+					top: (($(window).height() - p2.outerHeight()) / 2) - 93 + "px",
+					left: (($(window).width() - p2.outerWidth()) / 2) + "px",
+					"opacity": 1
+				}).delay(1000)
+				.animate({opacity: 0}, 3000, function(){
+					$(this).remove();
+				});
 			}
 			$(".reset").hide();
 			$(".message").html("<button class=\"restart\">Play Again</button>");
 		});
 	});
 	$(document).delegate("button.riverPush", "click", function(){
+		$(this).attr("disabled", true);
 		var a = $("<button />").addClass("flop"),
 			b = $("<button />").addClass("turn push"),
 			c = $("<button />").addClass("river push").click(function(){
@@ -274,6 +331,7 @@ $(document).ready(function(){
 		if( ajax_flag ) return;
 
 		ajax_flag = true;
+		$(this).attr("disabled", true);
 		var betAmounts = "",
 			totalBets = 0;
 		$("#bet_table input").each(function(i,e){
@@ -289,9 +347,9 @@ $(document).ready(function(){
 			},
 			complete: function(d){
 				ajax_flag = false;
+				$("button.place_bet").removeAttr("disabled");
 				if( d.status !== 200 ){
-					var err = $.parseJSON(d.responseText).error;
-					alert(err);
+					return alert($.parseJSON(d.responseText).error);
 				} else {
 					var n = parseInt($(".right span.amount").html().replace(/,/g, ""));
 					$(".right span.amount").animateNumber(n - totalBets, {
@@ -315,9 +373,11 @@ $(document).ready(function(){
 	function reset_game(){
 		$(".hole, img.fly").stop().remove();
 		$(".bet").find("button").html("Place Bets").end().hide();
+		$("button").removeAttr("disabled");
 		$(".reset").hide();
 		$(".ui").show();
 		$("#bet_table tbody").empty();
+		$("#bet_table .totalWager").empty();
 		$.modal.close();
 		game_start = false;
 	}
@@ -341,7 +401,7 @@ $(document).ready(function(){
 	}
 
 	function updateOdds(arr, m, init){
-		if( $(".odds").eq(0).html() == "" ){
+		if( state == 0 ){
 			for(i = 0; i < arr.wins.length; i++){
 				// Bet Table
 				$("#bet_table tbody").append(
@@ -366,9 +426,11 @@ $(document).ready(function(){
 					newNum = round(arr.wins[i]/arr.total),
 					oldNum = parseFloat($(".odds").eq(i).find("strong").eq(0).html());
 
-				var temp = $("#bet_table tbody tr").eq(i).find("input");
-				temp.parent().next().html("<input type=\"number\" /> " + Math.round(m[i]*10)/10 + "x");
+				var temp = $("#bet_table tbody tr").eq(i).find("input"),
+					tf0 = $("#bet_table tfoot tr").eq(1).find("td").eq(state);
+				temp.parent().next().html("<input type=\"number\" /> " + ((Math.round(m[i]*10)/10) || "0") + "x");
 				temp.parent().html("$" + (temp.val() || "0") + " (" + temp.parent().text().substring(2) + ")");
+				tf0.html(parseInt(tf0.html() || 0) + parseInt(temp.val() || 0) + "");
 
 				obj.eq(0).animateNumber(newNum, {
 					duration: 500,
@@ -411,6 +473,7 @@ $(document).ready(function(){
 				});
 			}
 		}
+		state++;
 	}
 	function round(i){
 		return Math.floor(i * 10000)/100;
@@ -444,12 +507,42 @@ $(document).ready(function(){
 			);
 		}
 	}
-	/*$("#handcount").mobiscroll().select({
-        theme: "ios",
-        display: "inline",
-        mode: "scroller",
-        inputClass: 'i-txt',
-        label: "",
-        width: 50
-    });*/
+	
+
+	$(".facebook").click(function(){
+		$.post("/login/", {
+			type: "facebook"
+		}, function(url){
+			window.location.href = url;
+		});
+		return false;
+	});
+	$(".persona").click(function(){
+		navigator.id.request();
+	});
+
 });
+if( !window.loginoverride ){
+	navigator.id.watch({
+	    onlogin: function(assertion) {
+	    },
+	    onlogout: function(){
+	        window.location.href = "http://alapoker.net/logout/"
+	    }
+	});
+} else {
+	navigator.id.watch({
+	    onlogin: function(assertion) {
+	        $.post('/login/', {
+	            type: "persona",
+	            assertion: assertion,
+	            cacheBust: new Date()
+	        }, function(msg){
+	            window.location.href = "http://alapoker.net/"
+	        });
+	    },
+	    onlogout: function(){
+	        window.location.href = "http://alapoker.net/logout/"
+	    }
+	});
+}

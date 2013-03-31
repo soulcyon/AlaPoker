@@ -1,11 +1,10 @@
 <?php
-require_once "db.php";
 class Game {
 	// Generic globals
 	private $kinds = array("2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A");
 	private $suits = array("C", "D", "H", "S");
 	private $iters = 100000;
-	private $houseEdge = 1.0;
+	private $houseEdge = 0.97;
 
 	// Game variables
 	private $state = 0;
@@ -28,7 +27,8 @@ class Game {
 		$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		ini_set("pokenum.iterations", $this->iters);
-		session_start();
+
+		if( !isset($_SESSION["user"]) ) die(json_encode(array("error" => "Please login.")));
 
 		$this->state = isset($_SESSION["state"]) ? $_SESSION["state"] : 0;
 		$this->players = isset($_SESSION["players"]) ? $_SESSION["players"] : 0;
@@ -54,7 +54,7 @@ class Game {
 			// New game started, reset all game variables
 			$this->state = 0;
 			$this->players = $post["players"];
-			$this->allowed = $this->getPlayers($this->players);
+			$this->allowed = 0/*$this->getPlayers($this->players)*/;
 			$this->gameid = -1;
 			$this->deck = array();
 			$this->hole = array();
@@ -100,9 +100,6 @@ class Game {
 		* Flop
 		**/
 		$this->pushHandle("flop", function(){
-			if(!isset($_SESSION["user"]))
-				die(json(array("error" => "Not logged in")));
-
 			$blank = array(0, "", false, null);
 			$preFlopCount = count(array_diff($this->amounts[0], $blank));
 
@@ -128,9 +125,6 @@ class Game {
 		* Turn
 		**/
 		$this->pushHandle("turn", function(){
-			if(!isset($_SESSION["user"]))
-				die(json(array("error" => "Not logged in")));
-
 			$blank = array(0, "", false, null);
 			$preFlopCount = count(array_diff($this->amounts[0], $blank));
 
@@ -161,9 +155,6 @@ class Game {
 		* River
 		**/
 		$this->pushHandle("river", function(){
-			if(!isset($_SESSION["user"]))
-				die(json(array("error" => "Not logged in")));
-
 			$blank = array(0, "", false, null);
 			$preFlopCount = count(array_diff($this->amounts[0], $blank));
 
@@ -191,14 +182,14 @@ class Game {
 				if( floor($odds["wins"][$i]) != 0 ){
 					for($j = 0; $j < 3; $j++){
 						if( isset($this->amounts[$j]) && isset($this->amounts[$j][$i]) ){
-							$pay_out += $this->amounts[$j][$i] * $this->mults[$j][$i];
+							$pay_out += floor($this->amounts[$j][$i] * $this->mults[$j][$i]);
 						}
 					}
 				}
 				if( floor($odds["ties"][$i]) != 0 ){
 					for($j = 0; $j < 3; $j++){
 						if( isset($this->amounts[$j]) && isset($this->amounts[$j][$i]) ){
-							$pay_out += $this->amounts[$j][$i];
+							$pay_out += floor($this->amounts[$j][$i]);
 						}
 					}
 				}
@@ -230,20 +221,17 @@ class Game {
 		* Bet
 		**/
 		$this->pushHandle("bet", function($post){
-			if(!isset($_SESSION["user"]))
-				die(json(array("error" => "Not logged in")));
-
 			if(count($post["amounts"]) != $this->players){
 				die(json(array("error" => "Invalid number of bets")));
 			}
 			
 			$blank = array(0, "", false, null);
-			$email = $_SESSION["user"];
 			$candidateAmounts = $post["amounts"];
 			$totalBet = 0;
+			$sumOfBets = 0;
 
 			// Assert positive integers
-			foreach($candidateAmounts as $amt)
+			foreach($candidateAmounts as $amt){
 				if($amt){
 					if(!is_numeric($amt) || intval($amt) != $amt)
 						die(json(array("error" => "Invalid bet amount: \$$amt")));
@@ -251,25 +239,41 @@ class Game {
 						die(json(array("error" => "You bet must be more than $0")));
 					$totalBet += intval($amt);
 				}
+			}
 
-			$q = $this->db->query("SELECT `index`, `balance` FROM `users` WHERE `email` = '$email'");
-			$rows = $q->fetchAll();
-			
 			// Assert non-empty bets and available balance
 			if( $totalBet <= 0 ){
 				die(json(array("error" => "Your bet must be more than $0")));
 			}
+
+			// 3/31 Logic
+			if( $this->state > 1 ){
+				foreach($this->amounts as $amt){
+					$sumOfBets += array_sum($amt); 
+				}
+				if( $totalBet > $sumOfBets ){
+					die(json(array("error" => "Your bet must be less than sum of previous bets")));
+				}
+		}
+
+			// Check balance
+			$email = $_SESSION["user"];
+			$q = $this->db->query("SELECT `index`, `balance` FROM `users` WHERE `email` = '$email'");
+			$rows = $q->fetchAll();
 			if( $totalBet > intval($rows[0]["balance"]) ){
 				die(json(array("error" => "Your bet must be less than your balance")));
 			}
 
 			$betCount = count(array_diff($candidateAmounts, $blank));
 
+			/* 3/27 Logic
+			$this->allowed = ($this->state == 1) ? $betCount : $this->allowed;
+
 			if($this->allowed <= 0 || $betCount > $this->allowed)
-				die(json(array("error" => "You've exhauted your allowed number of bets")));
+				die(json(array("error" => "You've exhauted your allowed number of bets")));*/
 
 			// Required to have 1 bet on pre-flop
-			if( $betCount >= 1 && $betCount <= $this->allowed ){
+			if( $betCount >= 1 ){
 				if( $this->state >= 0 ){
 					// Update DB
 					$index = intval($rows[0]["index"]);
@@ -278,8 +282,12 @@ class Game {
 
 					// Update game variables
 					$this->amounts[$this->state - 1] = $post["amounts"];
-					$this->allowed -= $betCount;
+
+					// 3/27 Logic
+					//$this->allowed -= $betCount;
 				}
+			} else {
+				die(json(array("error" => "Your must bet on at least 1 hand.")));
 			}
 		});
 
