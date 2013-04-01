@@ -4,7 +4,7 @@ class Game {
 	private $kinds = array("2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A");
 	private $suits = array("C", "D", "H", "S");
 	private $iters = 100000;
-	private $houseEdge = 0.97;
+	private $houseEdge = 1;
 
 	// Game variables
 	private $state = 0;
@@ -33,6 +33,7 @@ class Game {
 		$this->state = isset($_SESSION["state"]) ? $_SESSION["state"] : 0;
 		$this->players = isset($_SESSION["players"]) ? $_SESSION["players"] : 0;
 		$this->allowed = isset($_SESSION["allowed"]) ? $_SESSION["allowed"] : 0;
+		$this->totalBet = isset($_SESSION["totalBet"]) ? $_SESSION["totalBet"] : 0;
 		$this->gameid = isset($_SESSION["gameid"]) ? $_SESSION["gameid"] : -1;
 		$this->deck = isset($_SESSION["deck"]) ? $_SESSION["deck"] : array();
 		$this->hole = isset($_SESSION["hole"]) ? $_SESSION["hole"] : array();
@@ -55,6 +56,7 @@ class Game {
 			$this->state = 0;
 			$this->players = $post["players"];
 			$this->allowed = 0/*$this->getPlayers($this->players)*/;
+			$this->totalBet = 0;
 			$this->gameid = -1;
 			$this->deck = array();
 			$this->hole = array();
@@ -71,15 +73,13 @@ class Game {
 			$this->getMultipliers($odds);
 
 			// Update DB
-			$email = $_SESSION["user"];
-			$q = $this->db->query("SELECT `index` FROM `users` WHERE `email` = '$email'");
-			$rows = $q->fetchAll();
-			$index = $rows[0]["index"];
+			$index = $this->getCurrentIndex();
 
 			$hands = json_encode($this->hole);
 			$board = json_encode(array($this->deck[1], $this->deck[2], $this->deck[3], $this->deck[5], $this->deck[7]));
 			$dead = json_encode(array($this->deck[0], $this->deck[4], $this->deck[6]));
-			$this->db->query("INSERT INTO `games` (`user`, `hands`, `board`, `dead`) VALUES ($index, '$hands', '$board', '$dead')");
+			$this->query("INSERT INTO `games` (`user`, `hands`, `board`, `dead`) VALUES (?, ?, ?, ?)",
+				array($index, $hands, $board, $dead));
 			$this->gameid = $this->db->lastInsertId();
 
 			echo json(array(
@@ -102,6 +102,8 @@ class Game {
 		$this->pushHandle("flop", function(){
 			$blank = array(0, "", false, null);
 			$preFlopCount = count(array_diff($this->amounts[0], $blank));
+			if( count($this->amounts) < 1 ) $this->amounts[] = array();
+			$this->totalBet = $this->updateBets($this->amounts[$this->state - 1]);
 
 			if($preFlopCount == 0)
 				die(json(array("error" => "No bets made pre-flop.")));
@@ -127,6 +129,8 @@ class Game {
 		$this->pushHandle("turn", function(){
 			$blank = array(0, "", false, null);
 			$preFlopCount = count(array_diff($this->amounts[0], $blank));
+			if( count($this->amounts) < 2 ) $this->amounts[] = array();
+			$this->totalBet = $this->updateBets($this->amounts[$this->state - 1]);
 
 			if($preFlopCount == 0)
 				die(json(array("error" => "No bets made pre-flop.")));
@@ -157,6 +161,8 @@ class Game {
 		$this->pushHandle("river", function(){
 			$blank = array(0, "", false, null);
 			$preFlopCount = count(array_diff($this->amounts[0], $blank));
+			if( count($this->amounts) < 3 ) $this->amounts[] = array();
+			$this->totalBet = $this->updateBets($this->amounts[$this->state - 1]);
 
 			if($preFlopCount == 0)
 				die(json(array("error" => "No bets made pre-flop.")));
@@ -197,14 +203,14 @@ class Game {
 
 			// DB Update
 			if($pay_out > 0){
-				$email = $_SESSION["user"];
-				$q = $this->db->query("SELECT `index` FROM `users` WHERE `email` = '$email'");
-				$rows = $q->fetchAll();
-				$index = $rows[0]["index"];
-				$this->db->query("INSERT INTO `transactions` (`user`, `type`, `amount`) VALUES ($index, 0, $pay_out)");
-				$this->db->query("UPDATE `users` SET `balance` = `balance` + $pay_out WHERE `index` = $index");
+				$index = $this->getCurrentIndex();
+				$this->query("INSERT INTO `transactions` (`user`, `type`, `amount`) VALUES (?, 0, ?)",
+					array($index, $pay_out));
+				$this->query("UPDATE `users` SET `balance` = `balance` + ? WHERE `index` = ?",
+					array($pay_out, $index));
 			}
-			$this->db->query("UPDATE `games` SET `timeend` = NOW() WHERE `index` = $this->gameid");
+			$this->query("UPDATE `games` SET `timeend` = NOW() WHERE `index` = ?",
+				array($this->gameid));
 
 			echo json(array(
 					"board" => array($this->board[4]),
@@ -241,11 +247,6 @@ class Game {
 				}
 			}
 
-			// Assert non-empty bets and available balance
-			if( $totalBet <= 0 ){
-				die(json(array("error" => "Your bet must be more than $0")));
-			}
-
 			// 3/31 Logic
 			if( $this->state > 1 ){
 				foreach($this->amounts as $amt){
@@ -254,11 +255,17 @@ class Game {
 				if( $totalBet > $sumOfBets ){
 					die(json(array("error" => "Your bet must be less than the pot.")));
 				}
+			} else {
+				// Assert non-empty bets and available balance
+				if( $totalBet <= 0 ){
+					die(json(array("error" => "Your bet must be more than $0")));
+				}
 			}
 
 			// Check balance
 			$email = $_SESSION["user"];
-			$q = $this->db->query("SELECT `index`, `balance` FROM `users` WHERE `email` = '$email'");
+			$q = $this->query("SELECT `index`, `balance` FROM `users` WHERE `email` = ?",
+				array($email));
 			$rows = $q->fetchAll();
 			if( $totalBet > intval($rows[0]["balance"]) ){
 				die(json(array("error" => "Your bet must be less than your balance")));
@@ -273,22 +280,11 @@ class Game {
 				die(json(array("error" => "You've exhauted your allowed number of bets")));*/
 
 			// Required to have 1 bet on pre-flop
-			if( $betCount >= 1 ){
-				if( $this->state >= 0 ){
-					// Update DB
-					$index = intval($rows[0]["index"]);
-					$this->db->query("INSERT INTO `transactions` (`user`, `type`, `amount`) VALUES ($index, $this->state, -$totalBet)");
-					$this->db->query("UPDATE `users` SET `balance` = `balance` - $totalBet WHERE `index` = $index");
-
-					// Update game variables
-					$this->amounts[$this->state - 1] = $post["amounts"];
-
-					// 3/27 Logic
-					//$this->allowed -= $betCount;
-				}
-			} else {
+			if( $betCount < 1 ){
 				die(json(array("error" => "Your must bet on at least 1 hand.")));
 			}
+
+			$this->amounts[$this->state - 1] = $post["amounts"];
 		});
 
 		$this->handles[$type]($post);
@@ -305,16 +301,61 @@ class Game {
 		$_SESSION["amounts"] = $this->amounts;
 		$_SESSION["allowed"] = $this->allowed;
 		$_SESSION["gameid"] = $this->gameid;
+		$_SESSION["totalBet"] = $this->totalBet;
 	}
 
-	private function buildDeck() {
+	public function query($st, $var){
+		// Execute DB query
+		$sth = $this->db->prepare($st);
+		$log = $sth->execute($var) . " | " . implode(",", $var);
+
+		// Logging queries
+		$ip = isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"];
+		$sth1 = $this->db->prepare("INSERT INTO `logger` (`query`, `referer`, `ip`) VALUES (?, ?, ?)");
+		$sth1->execute(array($log, $_SERVER["HTTP_REFERER"], ip2long($ip)));
+
+		return $sth;
+	}
+
+	private function getCurrentIndex(){
+		$email = $_SESSION["user"];
+		$q = $this->query("SELECT `index` FROM `users` WHERE `email` = ?",
+			array($email));
+		$rows = $q->fetchAll();
+		return $rows[0]["index"];
+	}
+
+	private function updateBets($arr){
+		$totalBet = 0;
+		foreach($arr as $amt){
+			if($amt){
+				if(!is_numeric($amt) || intval($amt) != $amt)
+					die(json(array("error" => "Invalid bet amount: \$$amt")));
+				if($amt < 0)
+					die(json(array("error" => "You bet must be more than $0")));
+				$totalBet += intval($amt);
+			}
+		}
+		// Update DB
+		if( $totalBet != 0 ){
+			$index = $this->getCurrentIndex();
+			$this->query("INSERT INTO `transactions` (`user`, `type`, `amount`) VALUES (?, ?, ?)",
+				array($index, $this->state, -$totalBet));
+			$this->query("UPDATE `users` SET `balance` = `balance` - ? WHERE `index` = ?",
+				array($totalBet, $index));
+		}
+
+		return $totalBet;
+	}
+
+	private function buildDeck(){
 		$deck = array();
 		for($s = 0; $s < count($this->suits); $s++)
 			for($k = 0; $k < count($this->kinds); $k++)
 				$this->deck[$s * count($this->kinds) + $k] = $this->kinds[$k] . $this->suits[$s];
 	}
 
-	private function dealCards() {
+	private function dealCards(){
 		shuffle($this->deck);
 		for($i = 0; $i < $this->players; $i++) {
 			$this->hole[$i] = array(array_shift($this->deck));
@@ -325,24 +366,24 @@ class Game {
 		}
 	}
 
-	private function flop() {
+	private function flop(){
 		$this->dead[0] = array_shift($this->deck); 
 		$this->board[0] = array_shift($this->deck); 
 		$this->board[1] = array_shift($this->deck);
 		$this->board[2] = array_shift($this->deck);
 	}
 
-	private function turn() {
+	private function turn(){
 		$this->dead[1] = array_shift($this->deck);
 		$this->board[3] = array_shift($this->deck); 
 	}
 
-	private function river() {
+	private function river(){
 		$this->dead[2] = array_shift($this->deck); 
 		$this->board[4] = array_shift($this->deck); 
 	}
 
-	public function getOdds() {
+	public function getOdds(){
 		$result = pokenum(PN_TEXAS, $this->hole, $this->board, $this->dead);
 		$wins = array();
 		$ties = array();
@@ -353,12 +394,12 @@ class Game {
 		return array("wins" => $wins, "ties" => $ties, "total" => $result["iterations"]);
 	}
 
-	public function getMultipliers($odds) {
+	public function getMultipliers($odds){
 		foreach($odds["wins"] as $w)
 			$this->mults[$this->state][] = $w == 0 ? 0 : floor($this->iters / $w * 10000) * $this->houseEdge / 10000;
 	}
 
-	public function getPlayers() {
+	public function getPlayers(){
 		return ($this->players == 2 ? 2 : floor(($this->players - 1) / 2)) + 1;
 	}
 }

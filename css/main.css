@@ -247,7 +247,7 @@ a:active, a:hover, a:visited, a {
     box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(50, 50, 50, 0.6);
     text-shadow: 0px 1px 0px rgba(255,255,255,.9);
-    color: #7f7f7f;
+    color: #5a5a5a;
     background: #acc5d2;
     background: -moz-linear-gradient(top, #acc5d2 0%, #9cb3c2 50%, #819eaf 51%, #8ac2e8 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#acc5d2), color-stop(50%,#9cb3c2), color-stop(51%,#819eaf), color-stop(100%,#8ac2e8));
@@ -262,24 +262,24 @@ a:active, a:hover, a:visited, a {
     top: -6px;
     font-size: 14px;
     text-transform: uppercase;
-    background: #4162a8;
-    border-top: 1px solid #38538c;
-    border-right: 1px solid #1f2d4d;
-    border-bottom: 1px solid #151e33;
-    border-left: 1px solid #1f2d4d;
+    background: #a84841;
+    border-top: 1px solid #8c3e38;
+    border-right: 1px solid #4d221f;
+    border-bottom: 1px solid #331715;
+    border-left: 1px solid #4d221f;
     border-radius: 4px;
-    box-shadow: inset 0 1px 10px 1px #5c8bee, 0px 1px 0 #1d2c4d, 0 6px 0px #1f3053, 0 8px 4px 1px #111111;
+    box-shadow: inset 0 1px 10px 1px #ee665c, 0px 1px 0 #4d201d, 0 6px 0px #53221f, 0 8px 4px 1px #111111;
     color: #fff;
     padding: 4px 16px 6px 16px;
     text-align: center;
-    text-shadow: 0px -1px 1px #1e2d4d;
+    text-shadow: 0px -1px 1px #4d211e;
 }
 .message button:hover {
-    box-shadow: inset 0 0px 20px 1px #87adff, 0px 1px 0 #1d2c4d, 0 6px 0px #1f3053, 0 8px 4px 1px #111111;
+    box-shadow: inset 0 0px 20px 1px #ff8f87, 0px 1px 0 #4d201d, 0 6px 0px #53221f, 0 8px 4px 1px #111111;
     cursor: pointer;
 }
 .message button:active, .message button[disabled] {
-    box-shadow: inset 0 1px 10px 1px #5c8bee, 0 1px 0 #1d2c4d, 0 2px 0 #1f3053, 0 4px 3px 0 #111111;
+    box-shadow: inset 0 1px 10px 1px #ee665c, 0 1px 0 #4d201d, 0 2px 0 #53221f, 0 4px 3px 0 #111111;
     top: -1px;
 }
 header {
@@ -540,7 +540,7 @@ header .right .amount:before {
 }
 .wintitle {
     position: absolute;
-    color: #E3C505;
+    color: #bada55;
     font-size: 40px;
     text-transform: uppercase;
     text-shadow: 0px 0px 22px black;
@@ -549,9 +549,6 @@ header .right .amount:before {
     border-radius: 30px 30px 0px 0px;
     padding: 10px 30px;
     z-index: 10240126;
-}
-.losetitle {
-    color: #F21B1B;
 }
 @-webkit-keyframes spin {
     from { -webkit-transform: rotate(0deg); }

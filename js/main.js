@@ -180,7 +180,7 @@ $(document).ready(function(){
 				})
 			});
 			$(".ui").hide();
-			$(".message").html("<span class=\"bet_placeholder\">You must place bets pre-flop</span>");
+			$(".message").html("<span class=\"bet_placeholder\">You must make at least one bet pre-flop.</span>");
 		});
 	});
 	
@@ -251,25 +251,27 @@ $(document).ready(function(){
 			$(".bet button").html("Show bets");
 			$("button.place_bet").attr("disabled", true);
 			var win = Math.floor(d.payout);
-
-			$(".totalWager").each(function(i, e){
-				win -= parseInt($(this).html() || "0");
-			});
+			if( win <= 0 ){
+				$(".totalWager").each(function(i, e){
+					win -= parseInt($(this).html() || "0");
+				});
+			}
 
 			var n = parseInt($(".right span.amount").html().replace(/,/g, "")),
-				p1 = $("<div />").addClass("winout").html((win + "").replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")),
+				p1 = $("<div />").addClass("winout").html((Math.abs(win) + "").replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")),
 				p2 = $("<div />").addClass("wintitle").html(win < 0 ? "You Lose" : "Payout");
 
-			$(".floor").append(p2, p1);
-			p2.css("width", p1.width() + "px").transition({
-				top: (($(window).height() - p2.outerHeight()) / 2) - 93 + "px",
-				left: (($(window).width() - p2.outerWidth()) / 2) + "px"
-			}, 1);
+			$(".floor").append(p1, p2);
 			p1.transition({
 				top: (($(window).height() - p1.outerHeight()) / 2) + "px",
 				left: (($(window).width() - p1.outerWidth()) / 2) + "px"
 			}, 1);
+			p2.css("width", p1.width() + "px").transition({
+				top: (($(window).height() - p2.outerHeight()) / 2) - 93 + "px",
+				left: (($(window).width() - p2.outerWidth()) / 2) + "px"
+			}, 1);
 			if( win < 0 ){
+				p1.css("color", "red");
 				p2.addClass("losetitle");
 			}
 			p1.animate({
@@ -277,7 +279,7 @@ $(document).ready(function(){
 			}, 3000, function(){
 				p2.animate({opacity: 0}, 500);
 				$(this).animateNumber(0, {
-					duration: 2000,
+					duration: win > 0 ? 2000 : 500,
 					animateOpacity: false,
 					floatStepDecimals: 0
 				}).animate({
@@ -292,11 +294,13 @@ $(document).ready(function(){
 					p2.remove();
 					$(this).remove();
 				});
-				$(".right span.amount").animateNumber(n + win, {
-					duration: 2000,
-					animateOpacity: false,
-					floatStepDecimals: 0
-				});
+				if( win > 0 ){
+					$(".right span.amount").animateNumber(n + win, {
+						duration: 2000,
+						animateOpacity: false,
+						floatStepDecimals: 0
+					});
+				}
 			});
 			$(".reset").hide();
 			$(".message").html("<button class=\"restart\">Play Again</button>");
@@ -333,7 +337,7 @@ $(document).ready(function(){
 		ajax_flag = true;
 		$(this).attr("disabled", true);
 		var betAmounts = "",
-			totalBets = 0;
+			totalBets = $("button.place_bet").data("currentBet") || 0;
 		$("#bet_table input").each(function(i,e){
 			betAmounts += " " + $(e).val();
 			totalBets += parseInt($(e).val()) || 0;
@@ -351,12 +355,13 @@ $(document).ready(function(){
 				if( d.status !== 200 ){
 					return alert($.parseJSON(d.responseText).error);
 				} else {
+					$("button.place_bet").data("currentBet", ($("button.place_bet").data("currentBet") || 0) - totalBets);
 					var n = parseInt($(".right span.amount").html().replace(/,/g, ""));
-					/*$(".right span.amount").animateNumber(n - totalBets, {
+					$(".right span.amount").animateNumber(n - totalBets, {
 						duration: 500,
 						animateOpacity: false,
 						floatStepDecimals: 0
-					});*/
+					});
 					$(".bet_placeholder").html(
 						$("<button />").addClass(hands < 0 ? "riverPush" : "flop").html(hands < 0 ? "River" : "Flop")
 					);
@@ -378,6 +383,7 @@ $(document).ready(function(){
 		$(".ui").show();
 		$("#bet_table tbody").empty();
 		$("#bet_table .totalWager").empty();
+		$("button.place_bet").data("currentBet", "");
 		$.modal.close();
 		game_start = false;
 	}
@@ -429,7 +435,7 @@ $(document).ready(function(){
 				var temp = $("#bet_table tbody tr").eq(i).find("input"),
 					tf0 = $("#bet_table tfoot tr").eq(1).find("td").eq(state);
 				temp.parent().next().html("<input type=\"number\" /> " + ((Math.round(m[i]*10)/10) || "0") + "x");
-				temp.parent().html("$" + (temp.val() || "0") + " (" + temp.parent().text().substring(2) + ")");
+				temp.parent().html("$" + (temp.val() || "0") + " (" + temp.parent().text().replace("$", "").trim() + ")");
 				tf0.html(parseInt(tf0.html() || 0) + parseInt(temp.val() || 0) + "");
 
 				obj.eq(0).animateNumber(newNum, {
@@ -446,8 +452,7 @@ $(document).ready(function(){
 					floatStepDecimals: 2,
 					floatEndDecimals: 4
 				});
-
-				if( newNum == 100 && !obj.hasClass("winner") ) {
+				if( state >= 3 && newNum == 100 && !obj.hasClass("winner") ) {
 					$(".hands .hole").addClass("faded");
 					obj.addClass("winner")
 					.parent().parent().removeClass("faded").append($("<div />").addClass("rays"));
