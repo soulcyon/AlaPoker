@@ -10,6 +10,8 @@ DONE| Display bets made
 DONE| "You win" < 0, show "You Lose"
 
 */
+if (window.location.hash == '#_=_')window.location.href = '/';
+
 $(document).ready(function(){
 	var AJAX_SCRIPT = "/",
 		LOGIN_SCRIPT = "/login/";
@@ -50,6 +52,7 @@ $(document).ready(function(){
 				$("<a />").attr({"href": "/logout/", "id":"logout"}).addClass("button").html("Logout").click(function(e){
 					navigator.id.logout();
 					$("#close_game").click();
+					window.location.href = "/logout/";
 					e.stopPropagation();
 					return false;
 				})
@@ -186,7 +189,7 @@ $(document).ready(function(){
 
 		ajax_flag = true;
 		$(this).attr("disabled", true);
-		if( hands < 5 )
+		if( hands < 0 )
 			$(".bet").hide();
 
 		$.post(AJAX_SCRIPT, {
@@ -210,7 +213,7 @@ $(document).ready(function(){
 		
 		ajax_flag = true;
 		$(this).attr("disabled", true);
-		if( hands < 5 )
+		if( hands < 0 )
 			$(".bet").hide();
 
 		$.post(AJAX_SCRIPT, {
@@ -246,58 +249,55 @@ $(document).ready(function(){
 			updateOdds(d.odds, d.mults);
 
 			$(".bet button").html("Show bets");
+			$("button.place_bet").attr("disabled", true);
+			var win = Math.floor(d.payout);
+
+			$(".totalWager").each(function(i, e){
+				win -= parseInt($(this).html() || "0");
+			});
+
 			var n = parseInt($(".right span.amount").html().replace(/,/g, "")),
-				win = Math.floor(d.payout),
 				p1 = $("<div />").addClass("winout").html((win + "").replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")),
-				p2 = $("<div />").addClass("wintitle").html("Payout");
-			$(".floor").append(p2);
-			if( win > 0 ){
-				$(".floor").append(p1);
-				p2.css("width", p1.width() + "px").transition({
-					top: (($(window).height() - p2.outerHeight()) / 2) - 93 + "px",
-					left: (($(window).width() - p2.outerWidth()) / 2) + "px"
-				},1);
-				p1.transition({
-					top: (($(window).height() - p1.outerHeight()) / 2) + "px",
-					left: (($(window).width() - p1.outerWidth()) / 2) + "px"
-				},1).animate({
-					zIndex: 10240125
-				}, 3000, function(){
-					p2.animate({opacity: 0}, 500);
-					$(this).animateNumber(0, {
-						duration: 2000,
-						animateOpacity: false,
-						floatStepDecimals: 0
-					}).animate({
-						top: ($(".amount").offset().top - 2) + "px",
-						left: ($(".amount").offset().left + 20) + "px",
-						color: "#AFAFAF",
-						fontSize: "16px",
-						padding: "0px",
-						backgroundColor: "#086264",
-						opacity: 0
-					}, 2000, function(){
-						p2.remove();
-						$(this).remove();
-					});
-					$(".right span.amount").animateNumber(n + win, {
-						duration: 2000,
-						animateOpacity: false,
-						floatStepDecimals: 0
-					});
-				})
-			} else {
-				p2.addClass("losetitle")
-				.html("You Lose!")
-				.css({
-					top: (($(window).height() - p2.outerHeight()) / 2) - 93 + "px",
-					left: (($(window).width() - p2.outerWidth()) / 2) + "px",
-					"opacity": 1
-				}).delay(1000)
-				.animate({opacity: 0}, 3000, function(){
+				p2 = $("<div />").addClass("wintitle").html(win < 0 ? "You Lose" : "Payout");
+
+			$(".floor").append(p2, p1);
+			p2.css("width", p1.width() + "px").transition({
+				top: (($(window).height() - p2.outerHeight()) / 2) - 93 + "px",
+				left: (($(window).width() - p2.outerWidth()) / 2) + "px"
+			}, 1);
+			p1.transition({
+				top: (($(window).height() - p1.outerHeight()) / 2) + "px",
+				left: (($(window).width() - p1.outerWidth()) / 2) + "px"
+			}, 1);
+			if( win < 0 ){
+				p2.addClass("losetitle");
+			}
+			p1.animate({
+				zIndex: 10240125
+			}, 3000, function(){
+				p2.animate({opacity: 0}, 500);
+				$(this).animateNumber(0, {
+					duration: 2000,
+					animateOpacity: false,
+					floatStepDecimals: 0
+				}).animate({
+					top: ($(".amount").offset().top - 2) + "px",
+					left: ($(".amount").offset().left + 20) + "px",
+					color: "#AFAFAF",
+					fontSize: "16px",
+					padding: "0px",
+					backgroundColor: "#086264",
+					opacity: 0
+				}, 2000, function(){
+					p2.remove();
 					$(this).remove();
 				});
-			}
+				$(".right span.amount").animateNumber(n + win, {
+					duration: 2000,
+					animateOpacity: false,
+					floatStepDecimals: 0
+				});
+			});
 			$(".reset").hide();
 			$(".message").html("<button class=\"restart\">Play Again</button>");
 		});
@@ -352,13 +352,13 @@ $(document).ready(function(){
 					return alert($.parseJSON(d.responseText).error);
 				} else {
 					var n = parseInt($(".right span.amount").html().replace(/,/g, ""));
-					$(".right span.amount").animateNumber(n - totalBets, {
+					/*$(".right span.amount").animateNumber(n - totalBets, {
 						duration: 500,
 						animateOpacity: false,
 						floatStepDecimals: 0
-					});
+					});*/
 					$(".bet_placeholder").html(
-						$("<button />").addClass(hands < 5 ? "riverPush" : "flop").html(hands < 5 ? "River" : "Flop")
+						$("<button />").addClass(hands < 0 ? "riverPush" : "flop").html(hands < 0 ? "River" : "Flop")
 					);
 					$.modal.close();
 				}
@@ -407,8 +407,8 @@ $(document).ready(function(){
 				$("#bet_table tbody").append(
 					$("<tr />").append(
 						$("<td />").append(
-							$("<span " + init[i][0][1].toLowerCase() + "/>").html(init[i][0][0]),
-							$("<span " + init[i][1][1].toLowerCase() + "/>").html(init[i][1][0])
+							$("<span " + init[i][0][1].toLowerCase() + "/>").html(init[i][0][0].replace("T", "10")),
+							$("<span " + init[i][1][1].toLowerCase() + "/>").html(init[i][1][0].replace("T", "10"))
 						),
 						$("<td />").html("<div pre>$</div><input type=\"text\" /> <div am>" + Math.round(m[i]*10)/10 + "x</div>"),
 						$("<td />"),
@@ -447,9 +447,10 @@ $(document).ready(function(){
 					floatEndDecimals: 4
 				});
 
-				if( newNum == 100 ) {
+				if( newNum == 100 && !obj.hasClass("winner") ) {
 					$(".hands .hole").addClass("faded");
-					obj.parent().parent().removeClass("faded").append($("<div />").addClass("rays"));
+					obj.addClass("winner")
+					.parent().parent().removeClass("faded").append($("<div />").addClass("rays"));
 				}
 				if( oldNum >= newNum ) continue;
 
@@ -522,15 +523,7 @@ $(document).ready(function(){
 	});
 
 });
-if( !window.loginoverride ){
-	navigator.id.watch({
-	    onlogin: function(assertion) {
-	    },
-	    onlogout: function(){
-	        window.location.href = "http://alapoker.net/logout/"
-	    }
-	});
-} else {
+if( window.loginoverride ){
 	navigator.id.watch({
 	    onlogin: function(assertion) {
 	        $.post('/login/', {
@@ -542,7 +535,6 @@ if( !window.loginoverride ){
 	        });
 	    },
 	    onlogout: function(){
-	        window.location.href = "http://alapoker.net/logout/"
 	    }
 	});
 }

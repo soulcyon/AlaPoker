@@ -115,6 +115,8 @@ Shank::beastMode();
 
 function html(){
 	Header("Content-type: text/html");
+	ShankTemplate::set("Ptime", filemtime("js/plugins.js"));
+	ShankTemplate::set("Mtime", filemtime("js/main.js"));
 	foreach(func_get_args() as $file){
 		echo ShankTemplate::parse($file . ".html");
 	}

@@ -348,32 +348,39 @@ header .right .amount:before {
 }
 #bet_table td > span {
     display: inline-block;
-    width: 32px;
+    width: 40px;
+    height: 30px;
     line-height: 30px;
     vertical-align: middle;
     font-weight: bold;
-    font-size: 110%;
-    padding-left: 5px;
+    font-size: 125%;
+    padding-left: 12px;
     text-align: left;
 }
-table td > span:nth-child(1) {
+#bet_table td > span:nth-child(1) {
     padding-left: 0px;
 }
-table td > span[d], table td > span[h] {
+#bet_table td > span[d], #bet_table td > span[h] {
     color: red;
 }
-table td > span[d] {
+#bet_table td > span[d]:after {
     background: url(../img/D.png) no-repeat center right;
 }
-table td > span[s] {
+#bet_table td > span[s]:after {
     background: url(../img/S.png) no-repeat center right;
 }
-table td > span[c] {
+#bet_table td > span[c]:after {
     background: url(../img/C.png) no-repeat center right;
 }
-table td > span[h] {
+#bet_table td > span[h]:after {
     background: url(../img/H.png) no-repeat center right;
-    color: red;
+}
+#bet_table td > span:after {
+    display: inline-block;
+    content: ' ';
+    width: 18px;
+    height: 18px;
+    background-size: 18px 18px !important;
 }
 .message.highlight {
     color: red;
@@ -528,7 +535,7 @@ table td > span[h] {
     background: rgba(0, 0, 0, 0.7);
     border-radius: 0px 0px 30px 30px;
     padding: 10px 30px;
-    min-width: 190px;
+    min-width: 250px;
     text-align: center;
 }
 .wintitle {
@@ -545,8 +552,6 @@ table td > span[h] {
 }
 .losetitle {
     color: #F21B1B;
-    text-shadow: 0px 0px 10px black;
-    border-radius: 30px;
 }
 @-webkit-keyframes spin {
     from { -webkit-transform: rotate(0deg); }

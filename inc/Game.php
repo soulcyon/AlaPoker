@@ -252,9 +252,9 @@ class Game {
 					$sumOfBets += array_sum($amt); 
 				}
 				if( $totalBet > $sumOfBets ){
-					die(json(array("error" => "Your bet must be less than sum of previous bets")));
+					die(json(array("error" => "Your bet must be less than the pot.")));
 				}
-		}
+			}
 
 			// Check balance
 			$email = $_SESSION["user"];
