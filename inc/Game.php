@@ -1,4 +1,6 @@
 <?php
+define("session.cookie_lifetime", 1800);
+define("session.gc_maxlifetime", 1800);
 class Game {
 	// Generic globals
 	private $kinds = array("2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A");
@@ -24,9 +26,22 @@ class Game {
 
 	public function __construct($type, $post){
 		$this->db = new PDO("mysql:host=localhost;dbname=alapoker", DB_USER, DB_PASS);
+		$this->db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 		$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		ini_set("pokenum.iterations", $this->iters);
+
+		if (!isset($_SESSION['CREATED'])) {
+			$_SESSION['CREATED'] = time();
+		} else if (time() - $_SESSION['CREATED'] > 1800) {
+			session_regenerate_id(true);
+			$_SESSION['CREATED'] = time();
+		}
+		if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800)) {
+			session_unset();
+			session_destroy();
+		}
+		$_SESSION['LAST_ACTIVITY'] = time();
 
 		if( !isset($_SESSION["user"]) ) die(json_encode(array("error" => "Please login.")));
 
@@ -137,10 +152,6 @@ class Game {
 
 			$this->turn();
 
-			if( count($this->amounts) == 1 ){
-				$this->amounts[] = array();
-			}
-
 			$odds = $this->getOdds();
 			$this->getMultipliers($odds);
 
@@ -161,6 +172,7 @@ class Game {
 		$this->pushHandle("river", function(){
 			$blank = array(0, "", false, null);
 			$preFlopCount = count(array_diff($this->amounts[0], $blank));
+
 			if( count($this->amounts) < 3 ) $this->amounts[] = array();
 			$this->totalBet = $this->updateBets($this->amounts[$this->state - 1]);
 
@@ -168,10 +180,6 @@ class Game {
 				die(json(array("error" => "No bets made pre-flop.")));
 
 			$this->river();
-
-			if( count($this->amounts) == 2 ){
-				$this->amounts[] = array();
-			}
 
 			// Odds calculation
 			require_once("inc/AlaPoker.php");
@@ -307,12 +315,13 @@ class Game {
 	public function query($st, $var){
 		// Execute DB query
 		$sth = $this->db->prepare($st);
-		$log = $sth->execute($var) . " | " . implode(",", $var);
+		$sth->execute($var);
+		$log = $st . " | " . implode(" @ ", $var);
 
 		// Logging queries
 		$ip = isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"];
-		$sth1 = $this->db->prepare("INSERT INTO `logger` (`query`, `referer`, `ip`) VALUES (?, ?, ?)");
-		$sth1->execute(array($log, $_SERVER["HTTP_REFERER"], ip2long($ip)));
+		$sth1 = $this->db->prepare("INSERT INTO `logger` (`query`, `referer`, `ip`) VALUES (?, ?, INET_ATON(?))");
+		$sth1->execute(array($log, $_SERVER["HTTP_REFERER"], $ip));
 
 		return $sth;
 	}
@@ -396,7 +405,7 @@ class Game {
 
 	public function getMultipliers($odds){
 		foreach($odds["wins"] as $w)
-			$this->mults[$this->state][] = $w == 0 ? 0 : floor($this->iters / $w * 10000) * $this->houseEdge / 10000;
+			$this->mults[$this->state][] = $w == 0 ? 0 : floor($this->iters / $w * 10) * $this->houseEdge / 10;
 	}
 
 	public function getPlayers(){

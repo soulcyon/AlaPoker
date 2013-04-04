@@ -10,7 +10,15 @@ DONE| Display bets made
 DONE| "You win" < 0, show "You Lose"
 
 */
-if (window.location.hash == '#_=_')window.location.href = '/';
+
+// Refresh page in 30 minutes
+setTimeout(function(){
+	alert("Your session has timed out");
+	window.location.reload();
+}, 1801000);
+
+// Get rid of annoying facebook hash
+if (window.location.hash == '#_=_') window.location.href = '/';
 
 $(document).ready(function(){
 	var AJAX_SCRIPT = "/",
@@ -189,6 +197,7 @@ $(document).ready(function(){
 
 		ajax_flag = true;
 		$(this).attr("disabled", true);
+		$("button.place_bet").data("currentBet", 0);
 		if( hands < 0 )
 			$(".bet").hide();
 
@@ -213,6 +222,7 @@ $(document).ready(function(){
 		
 		ajax_flag = true;
 		$(this).attr("disabled", true);
+		$("button.place_bet").data("currentBet", 0);
 		if( hands < 0 )
 			$(".bet").hide();
 
@@ -238,6 +248,7 @@ $(document).ready(function(){
 
 		ajax_flag = true;
 		$(this).attr("disabled", true);
+		$("button.place_bet").data("currentBet", 0);
 		$.post(AJAX_SCRIPT, {
 			type: "river",
 			cacheBust: new Date()
