@@ -318,7 +318,7 @@ header .right .amount:before {
     content: ' ';
     vertical-align: top;
 }
-#bet_table {
+#bet_table, #options_table {
     width: 600px;
 }
 #bet_table td {
@@ -642,6 +642,20 @@ header .right .amount:before {
     vertical-align: middle;
     background: url(../img/facebook.png) no-repeat center center;
 }
+.admin .hole {
+    width: 200px;
+    margin-top: 30px;
+}
+.hole > input {
+    width: 40px;
+    margin-left: 10px;
+}
+.hole.d0 {
+    margin-left: -30px;
+}
+.hole.d2 {
+    margin-left: 30px;
+}
 .h0 {
     top: -60px;
     left: -150px;
@@ -714,7 +728,120 @@ header .right .amount:before {
     top: 10px;
     left: 200px;
 }
-
+.enc {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    font-size: 50px;
+    color: rgb(1, 34, 0);
+    text-shadow: rgb(0, 94, 4) 0px 1px 0px;   
+}
+#options_table td {
+    padding-left: 10px;
+}
+#options_table tbody td:nth-child(1) {
+    border-right: 1px dotted #333;
+    font-weight: bold;
+    padding-right: 20px;
+    text-align: left;
+    padding-left: 0px;
+}
+#options_table label {
+    display: inline-block;
+    width: 100px;
+}
+#options_table tfoot td {
+    padding-top: 30px;
+    text-align: center;
+}
+#rakeOpt, #rakeOpt * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    display: inline-block;
+    cursor: default;
+}
+#rakeOpt {
+    position: relative;
+}
+#rakeOpt a {
+    position: absolute;
+    z-index: 1;
+}
+#rakeOpt a:nth-child(2) {
+    background: inherit !important;
+}
+#rakeOpt.vertical a {
+    width: 100%;
+    bottom: 0;
+}
+#rakeOpt.horizontal a {
+    height: 100%;
+    right: 0;
+}
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    #rakeOpt:before, body.TOUCH, #rakeOpt div {
+        -ms-touch-action: none;
+    }
+    #rakeOpt:before {
+        display: block;
+        position: absolute;
+        width: 150%;
+        left: -25%;
+        height: 400%;
+        top: -150%;
+        content: "";
+        z-index: -1;
+    }
+    #rakeOpt.vertical:before {
+        width: 400%;
+        left: -150%;
+        height: 150%;
+        top: -25%;
+    }
+}
+#rakeOpt {
+    border: 1px solid #908d84;
+    border-radius: 3px;
+}
+#rakeOpt.connect a, #rakeOpt.connect.lower {
+    background: #b2a98f;
+}
+#rakeOpt, #rakeOpt.connect.lower a {
+    background: #d9d7cb;
+    box-shadow: inset 0px 1px 7px #b6b4a8
+}
+#rakeOpt.disabled, #rakeOpt.disabled.connect.lower a {
+    background: #ccc;
+    box-shadow: none;
+}
+#rakeOpt div {
+    height: 18px;
+    width: 18px;
+    border: 1px solid #99968f;
+    border-radius: 3px;
+    background: #efefe7;
+}
+#rakeOpt.disabled div {
+    background: transparent;
+}
+#rakeOpt.horizontal {
+    width: 300px;
+    height: 10px;
+}
+#rakeOpt.horizontal div {
+    margin: -5px 0px 5px -9px;
+}
+#rakeOpt.vertical {
+    width: 10px;
+    height: 300px;
+}
+#rakeOpt.vertical div {
+    margin: -9px 0 0 -5px;
+}
 
 @media only screen and (min-width: 35em) {
 

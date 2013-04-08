@@ -25,12 +25,9 @@ class Game {
 	}
 
 	public function __construct($type, $post){
-		$this->db = new PDO("mysql:host=localhost;dbname=alapoker", DB_USER, DB_PASS);
-		$this->db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-		$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 		ini_set("pokenum.iterations", $this->iters);
-
+		
+		// Session handling
 		if (!isset($_SESSION['CREATED'])) {
 			$_SESSION['CREATED'] = time();
 		} else if (time() - $_SESSION['CREATED'] > 1800) {
@@ -45,6 +42,7 @@ class Game {
 
 		if( !isset($_SESSION["user"]) ) die(json_encode(array("error" => "Please login.")));
 
+		// Initialize variables
 		$this->state = isset($_SESSION["state"]) ? $_SESSION["state"] : 0;
 		$this->players = isset($_SESSION["players"]) ? $_SESSION["players"] : 0;
 		$this->allowed = isset($_SESSION["allowed"]) ? $_SESSION["allowed"] : 0;
@@ -56,6 +54,11 @@ class Game {
 		$this->dead = isset($_SESSION["dead"]) ? $_SESSION["dead"] : array();
 		$this->mults = isset($_SESSION["mults"]) ? $_SESSION["mults"] : array();
 		$this->amounts = isset($_SESSION["amounts"]) ? $_SESSION["amounts"] : array();
+
+		// Load global options
+		$st = MySQL::query("SELECT `value` FROM `options` WHERE `key` = 'rake'", array());
+		$st = $st->fetchAll();
+		$this->houseEdge = floatval($st[0][0]);
 
 		/**
 		* Pre-flop
@@ -93,9 +96,9 @@ class Game {
 			$hands = json_encode($this->hole);
 			$board = json_encode(array($this->deck[1], $this->deck[2], $this->deck[3], $this->deck[5], $this->deck[7]));
 			$dead = json_encode(array($this->deck[0], $this->deck[4], $this->deck[6]));
-			$this->query("INSERT INTO `games` (`user`, `hands`, `board`, `dead`) VALUES (?, ?, ?, ?)",
+			MySQL::query("INSERT INTO `games` (`user`, `hands`, `board`, `dead`) VALUES (?, ?, ?, ?)",
 				array($index, $hands, $board, $dead));
-			$this->gameid = $this->db->lastInsertId();
+			$this->gameid = MySQL::getLastId();
 
 			echo json(array(
 					"hole" => $this->hole,
@@ -212,13 +215,13 @@ class Game {
 			// DB Update
 			if($pay_out > 0){
 				$index = $this->getCurrentIndex();
-				$this->query("INSERT INTO `transactions` (`user`, `type`, `amount`) VALUES (?, 0, ?)",
+				MySQL::query("INSERT INTO `transactions` (`user`, `type`, `amount`) VALUES (?, 0, ?)",
 					array($index, $pay_out));
-				$this->query("UPDATE `users` SET `balance` = `balance` + ? WHERE `index` = ?",
+				MySQL::query("UPDATE `users` SET `balance` = `balance` + ? WHERE `index` = ?",
 					array($pay_out, $index));
 			}
-			$this->query("UPDATE `games` SET `timeend` = NOW() WHERE `index` = ?",
-				array($this->gameid));
+			MySQL::query("UPDATE `games` SET `timeend` = NOW(), `amounts` = ? WHERE `index` = ?",
+				array(json_encode($this->amounts), $this->gameid));
 
 			echo json(array(
 					"board" => array($this->board[4]),
@@ -272,7 +275,7 @@ class Game {
 
 			// Check balance
 			$email = $_SESSION["user"];
-			$q = $this->query("SELECT `index`, `balance` FROM `users` WHERE `email` = ?",
+			$q = MySQL::query("SELECT `index`, `balance` FROM `users` WHERE `email` = ?",
 				array($email));
 			$rows = $q->fetchAll();
 			if( $totalBet > intval($rows[0]["balance"]) ){
@@ -312,23 +315,9 @@ class Game {
 		$_SESSION["totalBet"] = $this->totalBet;
 	}
 
-	public function query($st, $var){
-		// Execute DB query
-		$sth = $this->db->prepare($st);
-		$sth->execute($var);
-		$log = $st . " | " . implode(" @ ", $var);
-
-		// Logging queries
-		$ip = isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"];
-		$sth1 = $this->db->prepare("INSERT INTO `logger` (`query`, `referer`, `ip`) VALUES (?, ?, INET_ATON(?))");
-		$sth1->execute(array($log, $_SERVER["HTTP_REFERER"], $ip));
-
-		return $sth;
-	}
-
 	private function getCurrentIndex(){
 		$email = $_SESSION["user"];
-		$q = $this->query("SELECT `index` FROM `users` WHERE `email` = ?",
+		$q = MySQL::query("SELECT `index` FROM `users` WHERE `email` = ?",
 			array($email));
 		$rows = $q->fetchAll();
 		return $rows[0]["index"];
@@ -348,10 +337,12 @@ class Game {
 		// Update DB
 		if( $totalBet != 0 ){
 			$index = $this->getCurrentIndex();
-			$this->query("INSERT INTO `transactions` (`user`, `type`, `amount`) VALUES (?, ?, ?)",
+			MySQL::query("INSERT INTO `transactions` (`user`, `type`, `amount`) VALUES (?, ?, ?)",
 				array($index, $this->state, -$totalBet));
-			$this->query("UPDATE `users` SET `balance` = `balance` - ? WHERE `index` = ?",
+			MySQL::query("UPDATE `users` SET `balance` = `balance` - ? WHERE `index` = ?",
 				array($totalBet, $index));
+			MySQL::query("UPDATE `games` SET `amounts` = ? WHERE `index` = ?",
+				array(json_encode($this->amounts), $this->gameid));
 		}
 
 		return $totalBet;
@@ -404,8 +395,8 @@ class Game {
 	}
 
 	public function getMultipliers($odds){
-		foreach($odds["wins"] as $w)
-			$this->mults[$this->state][] = $w == 0 ? 0 : floor($this->iters / $w * 10) * $this->houseEdge / 10;
+		foreach($odds["wins"] as $k => $w)
+			$this->mults[$this->state][] = $w == 0 ? 0 : floor($this->iters / ($w + $odds["ties"][$k]/2) * 10) * $this->houseEdge / 10;
 	}
 
 	public function getPlayers(){

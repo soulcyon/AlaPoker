@@ -1,18 +1,4 @@
-/*
-TODO
-================
-DONE| Unlimited bets per hand
-DONE| Max bet <= sum of all previous bets
-- * Show reset button on River
-DONE| Word wrap on bet_table
-DONE| bet_table graphics
-DONE| Display bets made
-DONE| "You win" < 0, show "You Lose"
-
-*/
-
-// Refresh page in 30 minutes
-setTimeout(function(){
+var timeout = setTimeout(function(){
 	alert("Your session has timed out");
 	window.location.reload();
 }, 1801000);
@@ -23,13 +9,6 @@ if (window.location.hash == '#_=_') window.location.href = '/';
 $(document).ready(function(){
 	var AJAX_SCRIPT = "/",
 		LOGIN_SCRIPT = "/login/";
-
-	$("#new_game, #load_game").addClass("hidden");
-
-	$.post(AJAX_SCRIPT, {
-		type: "game",
-		cacheBust: new Date()
-	});
 
 	// Check login and load user data
 	$.post(LOGIN_SCRIPT, {
@@ -68,7 +47,6 @@ $(document).ready(function(){
 		})
 	});
 
-	// Login loop
 	var game_start = false,
 		push_flag = false,
 		ajax_flag = false,
@@ -118,12 +96,11 @@ $(document).ready(function(){
 
 		ajax_flag = true;
 		$.post(AJAX_SCRIPT, {
-			type: "load_game",
-			cacheBust: new Date()
+			type: "load_game"
 		}, function(d){
 			ajax_flag = false;
 			$("#new_game").trigger("click");
-		})
+		});
 	});
 	$("#close_game").bind("click", function(){
 		if( !can_play ) return alert("Please login to start a new game!");
@@ -397,6 +374,11 @@ $(document).ready(function(){
 		$("button.place_bet").data("currentBet", "");
 		$.modal.close();
 		game_start = false;
+		clearTimeout(timeout);
+		timeout = setTimeout(function(){
+			alert("Your session has timed out");
+			window.location.reload();
+		}, 1801000);
 	}
 
 	function addHands(arr){
@@ -524,33 +506,4 @@ $(document).ready(function(){
 			);
 		}
 	}
-	
-
-	$(".facebook").click(function(){
-		$.post("/login/", {
-			type: "facebook"
-		}, function(url){
-			window.location.href = url;
-		});
-		return false;
-	});
-	$(".persona").click(function(){
-		navigator.id.request();
-	});
-
 });
-if( window.loginoverride ){
-	navigator.id.watch({
-	    onlogin: function(assertion) {
-	        $.post('/login/', {
-	            type: "persona",
-	            assertion: assertion,
-	            cacheBust: new Date()
-	        }, function(msg){
-	            window.location.href = "http://alapoker.net/"
-	        });
-	    },
-	    onlogout: function(){
-	    }
-	});
-}

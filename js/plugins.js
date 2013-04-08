@@ -1,4 +1,60 @@
-// Place any jQuery/helper plugins in here.
+/*
+ * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
+ *
+ * Uses the built in easing capabilities added In jQuery 1.1
+ * to offer multiple easing options
+ *
+ * TERMS OF USE - EASING EQUATIONS
+ * 
+ * Open source under the BSD License. 
+ * 
+ * Copyright Ã‚Â© 2001 Robert Penner
+ * All rights reserved.
+ *
+ * TERMS OF USE - jQuery Easing
+ * 
+ * Open source under the BSD License. 
+ * 
+ * Copyright Ã‚Â© 2008 George McGinley Smith
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, 
+ * are permitted provided that the following conditions are met:
+ * 
+ * Redistributions of source code must retain the above copyright notice, this list of 
+ * conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list 
+ * of conditions and the following disclaimer in the documentation and/or other materials 
+ * provided with the distribution.
+ * 
+ * Neither the name of the author nor the names of contributors may be used to endorse 
+ * or promote products derived from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+ *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+ * OF THE POSSIBILITY OF SUCH DAMAGE. 
+ *
+*/
+jQuery.easing.jswing=jQuery.easing.swing;jQuery.extend(jQuery.easing,{def:"easeOutQuad",swing:function(e,f,a,h,g){return jQuery.easing[jQuery.easing.def](e,f,a,h,g)},easeInQuad:function(e,f,a,h,g){return h*(f/=g)*f+a},easeOutQuad:function(e,f,a,h,g){return -h*(f/=g)*(f-2)+a},easeInOutQuad:function(e,f,a,h,g){if((f/=g/2)<1){return h/2*f*f+a}return -h/2*((--f)*(f-2)-1)+a},easeInCubic:function(e,f,a,h,g){return h*(f/=g)*f*f+a},easeOutCubic:function(e,f,a,h,g){return h*((f=f/g-1)*f*f+1)+a},easeInOutCubic:function(e,f,a,h,g){if((f/=g/2)<1){return h/2*f*f*f+a}return h/2*((f-=2)*f*f+2)+a},easeInQuart:function(e,f,a,h,g){return h*(f/=g)*f*f*f+a},easeOutQuart:function(e,f,a,h,g){return -h*((f=f/g-1)*f*f*f-1)+a},easeInOutQuart:function(e,f,a,h,g){if((f/=g/2)<1){return h/2*f*f*f*f+a}return -h/2*((f-=2)*f*f*f-2)+a},easeInQuint:function(e,f,a,h,g){return h*(f/=g)*f*f*f*f+a},easeOutQuint:function(e,f,a,h,g){return h*((f=f/g-1)*f*f*f*f+1)+a},easeInOutQuint:function(e,f,a,h,g){if((f/=g/2)<1){return h/2*f*f*f*f*f+a}return h/2*((f-=2)*f*f*f*f+2)+a},easeInSine:function(e,f,a,h,g){return -h*Math.cos(f/g*(Math.PI/2))+h+a},easeOutSine:function(e,f,a,h,g){return h*Math.sin(f/g*(Math.PI/2))+a},easeInOutSine:function(e,f,a,h,g){return -h/2*(Math.cos(Math.PI*f/g)-1)+a},easeInExpo:function(e,f,a,h,g){return(f==0)?a:h*Math.pow(2,10*(f/g-1))+a},easeOutExpo:function(e,f,a,h,g){return(f==g)?a+h:h*(-Math.pow(2,-10*f/g)+1)+a},easeInOutExpo:function(e,f,a,h,g){if(f==0){return a}if(f==g){return a+h}if((f/=g/2)<1){return h/2*Math.pow(2,10*(f-1))+a}return h/2*(-Math.pow(2,-10*--f)+2)+a},easeInCirc:function(e,f,a,h,g){return -h*(Math.sqrt(1-(f/=g)*f)-1)+a},easeOutCirc:function(e,f,a,h,g){return h*Math.sqrt(1-(f=f/g-1)*f)+a},easeInOutCirc:function(e,f,a,h,g){if((f/=g/2)<1){return -h/2*(Math.sqrt(1-f*f)-1)+a}return h/2*(Math.sqrt(1-(f-=2)*f)+1)+a},easeInElastic:function(f,h,e,l,k){var i=1.70158;var j=0;var g=l;if(h==0){return e}if((h/=k)==1){return e+l}if(!j){j=k*0.3}if(g<Math.abs(l)){g=l;var i=j/4}else{var i=j/(2*Math.PI)*Math.asin(l/g)}return -(g*Math.pow(2,10*(h-=1))*Math.sin((h*k-i)*(2*Math.PI)/j))+e},easeOutElastic:function(f,h,e,l,k){var i=1.70158;var j=0;var g=l;if(h==0){return e}if((h/=k)==1){return e+l}if(!j){j=k*0.3}if(g<Math.abs(l)){g=l;var i=j/4}else{var i=j/(2*Math.PI)*Math.asin(l/g)}return g*Math.pow(2,-10*h)*Math.sin((h*k-i)*(2*Math.PI)/j)+l+e},easeInOutElastic:function(f,h,e,l,k){var i=1.70158;var j=0;var g=l;if(h==0){return e}if((h/=k/2)==2){return e+l}if(!j){j=k*(0.3*1.5)}if(g<Math.abs(l)){g=l;var i=j/4}else{var i=j/(2*Math.PI)*Math.asin(l/g)}if(h<1){return -0.5*(g*Math.pow(2,10*(h-=1))*Math.sin((h*k-i)*(2*Math.PI)/j))+e}return g*Math.pow(2,-10*(h-=1))*Math.sin((h*k-i)*(2*Math.PI)/j)*0.5+l+e},easeInBack:function(e,f,a,i,h,g){if(g==undefined){g=1.70158}return i*(f/=h)*f*((g+1)*f-g)+a},easeOutBack:function(e,f,a,i,h,g){if(g==undefined){g=1.70158}return i*((f=f/h-1)*f*((g+1)*f+g)+1)+a},easeInOutBack:function(e,f,a,i,h,g){if(g==undefined){g=1.70158}if((f/=h/2)<1){return i/2*(f*f*(((g*=(1.525))+1)*f-g))+a}return i/2*((f-=2)*f*(((g*=(1.525))+1)*f+g)+2)+a},easeInBounce:function(e,f,a,h,g){return h-jQuery.easing.easeOutBounce(e,g-f,0,h,g)+a},easeOutBounce:function(e,f,a,h,g){if((f/=g)<(1/2.75)){return h*(7.5625*f*f)+a}else{if(f<(2/2.75)){return h*(7.5625*(f-=(1.5/2.75))*f+0.75)+a}else{if(f<(2.5/2.75)){return h*(7.5625*(f-=(2.25/2.75))*f+0.9375)+a}else{return h*(7.5625*(f-=(2.625/2.75))*f+0.984375)+a}}}},easeInOutBounce:function(e,f,a,h,g){if(f<g/2){return jQuery.easing.easeInBounce(e,f*2,0,h,g)*0.5+a}return jQuery.easing.easeOutBounce(e,f*2-g,0,h,g)*0.5+h*0.5+a}});
+
+(function(f){f.fn.noUiSlider=function(n,r){function s(a,e,c){var g=e.data("setup"),l=g.handles;e=g.settings;g=g.pos;a=0>a?0:100<a?100:a;2==e.handles&&(c.is(":first-child")?(c=parseFloat(l[1][0].style[g])-e.margin,a=a>c?c:a):(c=parseFloat(l[0][0].style[g])+e.margin,a=a<c?c:a));e.step&&(c=m.from(e.range,e.step),a=Math.round(a/c)*c);return a}function t(a){try{return[a.clientX||a.originalEvent.clientX||a.originalEvent.touches[0].clientX,a.clientY||a.originalEvent.clientY||a.originalEvent.touches[0].clientY]}catch(e){return["x",
+"y"]}}var j=window.navigator.msPointerEnabled?2:"ontouchend"in document?3:1;window.debug&&console&&console.log(j);var m={to:function(a,e){e=0>a[0]?e+Math.abs(a[0]):e-a[0];return 100*e/this._length(a)},from:function(a,e){return 100*e/this._length(a)},is:function(a,e){return e*this._length(a)/100+a[0]},_length:function(a){return a[0]>a[1]?a[0]-a[1]:a[1]-a[0]}},w={handles:2,serialization:{to:["",""],resolution:0.01}};methods={create:function(){return this.each(function(){var a=f.extend(w,n),e=f(this).data("_isnS_",
+!0),c=[],g,l,b="",h=function(a){return!isNaN(parseFloat(a))&&isFinite(a)},k=(a.serialization.resolution=a.serialization.resolution||0.01).toString().split("."),q=1==k[0]?0:k[1].length;a.start=h(a.start)?[a.start,0]:a.start;f.each(a,function(b,d){h(d)?a[b]=parseFloat(d):"object"==typeof d&&h(d[0])&&(d[0]=parseFloat(d[0]),h(d[1])&&(d[1]=parseFloat(d[1])));var c=!1;d="undefined"==typeof d?"x":d;switch(b){case "range":case "start":c=2!=d.length||!h(d[0])||!h(d[1]);break;case "handles":c=1>d||2<d||!h(d);
+break;case "connect":c="lower"!=d&&"upper"!=d&&"boolean"!=typeof d;break;case "orientation":c="vertical"!=d&&"horizontal"!=d;break;case "margin":case "step":c="undefined"!=typeof d&&!h(d);break;case "serialization":c="object"!=typeof d||!h(d.resolution)||"object"==typeof d.to&&d.to.length<a.handles;break;case "slide":c="function"!=typeof d}c&&console&&console.error("Bad input for "+b+" on slider:",e)});a.margin=a.margin?m.from(a.range,a.margin):0;if(a.serialization.to instanceof jQuery||"string"==
+typeof a.serialization.to||!1===a.serialization.to)a.serialization.to=[a.serialization.to];"vertical"==a.orientation?(b+="vertical",g="top",l=1):(b+="horizontal",g="left",l=0);b+=a.connect?"lower"==a.connect?" connect lower":" connect":"";e.addClass(b);for(b=0;b<a.handles;b++){c[b]=e.append("<a><div></div></a>").children(":last");k=m.to(a.range,a.start[b]);c[b].css(g,k+"%");100==k&&c[b].is(":first-child")&&c[b].css("z-index",2);var k=(1===j?"mousedown":2===j?"MSPointerDown":"touchstart")+".noUiSliderX",
+r=(1===j?"mousemove":2===j?"MSPointerMove":"touchmove")+".noUiSlider",v=(1===j?"mouseup":2===j?"MSPointerUp":"touchend")+".noUiSlider";c[b].find("div").on(k,function(b){f("body").bind("selectstart.noUiSlider",function(){return!1});if(!e.hasClass("disabled")){f("body").addClass("TOUCH");var d=f(this).addClass("active").parent(),h=d.add(f(document)).add("body"),k=parseFloat(d[0].style[g]),j=t(b),u=j,n=!1;f(document).on(r,function(b){b.preventDefault();b=t(b);if("x"!=b[0]){b[0]-=j[0];b[1]-=j[1];var p=
+[u[0]!=b[0],u[1]!=b[1]],f=k+100*b[l]/(l?e.height():e.width()),f=s(f,e,d);if(p[l]&&f!=n){d.css(g,f+"%").data("input").val(m.is(a.range,f).toFixed(q));var p=a.slide,h=e.data("_n",!0);"function"===typeof p&&p.call(h,void 0);n=f;d.css("z-index",2==c.length&&100==f&&d.is(":first-child")?2:1)}u=b}}).on(v,function(){h.off(".noUiSlider");f("body").removeClass("TOUCH");e.find(".active").removeClass("active").end().data("_n")&&e.data("_n",!1).change()})}}).on("click",function(a){a.stopPropagation()})}if(1==
+j)e.on("click",function(b){if(!e.hasClass("disabled")){var d=t(b);b=100*(d[l]-e.offset()[g])/(l?e.height():e.width());d=1<c.length?d[l]<(c[0].offset()[g]+c[1].offset()[g])/2?c[0]:c[1]:c[0];b=s(b,e,d);d.css(g,b+"%").data("input").val(m.is(a.range,b).toFixed(q));b=a.slide;"function"===typeof b&&b.call(e,void 0);e.change()}});for(b=0;b<c.length;b++)k=m.is(a.range,parseFloat(c[b][0].style[g])).toFixed(q),"string"==typeof a.serialization.to[b]?c[b].data("input",e.append('<input type="hidden" name="'+a.serialization.to[b]+
+'">').find("input:last").val(k).change(function(a){a.stopPropagation()})):!1==a.serialization.to[b]?c[b].data("input",{val:function(a){if("undefined"!=typeof a)this.handle.data("noUiVal",a);else return this.handle.data("noUiVal")},handle:c[b]}):c[b].data("input",a.serialization.to[b].data("handleNR",b).val(k).change(function(){var a=[null,null];a[f(this).data("handleNR")]=f(this).val();e.val(a)}));f(this).data("setup",{settings:a,handles:c,pos:g,res:q})})},val:function(a){if("undefined"!==typeof a){var e=
+"number"==typeof a?[a]:a;return this.each(function(){for(var a=f(this).data("setup"),b=0;b<a.handles.length;b++)if(null!=e[b]){var c=s(m.to(a.settings.range,e[b]),f(this),a.handles[b]);a.handles[b].css(a.pos,c+"%").data("input").val(m.is(a.settings.range,c).toFixed(a.res))}})}a=f(this).data("setup").handles;for(var c=[],g=0;g<a.length;g++)c.push(parseFloat(a[g].data("input").val()));return 1==c.length?c[0]:c},disabled:function(){return r?f(this).addClass("disabled"):f(this).removeClass("disabled")}};
+var v=jQuery.fn.val;jQuery.fn.val=function(){return this.data("_isnS_")?methods.val.apply(this,arguments):v.apply(this,arguments)};return"disabled"==n?methods.disabled.apply(this):methods.create.apply(this)}})(jQuery);
+
 /*!
  * jQuery Transit - CSS3 transitions and transformations
  * (c) 2011-2012 Rico Sta. Cruz <rico@ricostacruz.com>

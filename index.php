@@ -10,13 +10,12 @@ Shank::config("root", str_replace("index.php", "", $_SERVER["SCRIPT_NAME"]));
 Shank::config("debug", true);
 
 Shank::route("GET /", function(){
+	ShankTemplate::set("Mtime", filemtime("js/main.js"));
 	html("header", "index", "footer");
 });
-Shank::route("GET /ladder", function(){
-	Header("Location: /ladder/");
-});
-Shank::route("GET /ladder/", function(){
-	html("header", "ladder", "footer");
+Shank::route("GET /aef1a53c65791117bf612fd6e39a3632f9f063ae4b2b25ee26712711d5956875", function(){
+	ShankTemplate::set("Atime", filemtime("js/admin.js"));
+	html("header", "admin", "footer");
 });
 Shank::route("GET /logout", function(){
 	Header("Location: /logout/");
@@ -45,13 +44,12 @@ Shank::route("GET /login/*", function(){
 	}
 });
 Shank::route("POST /login/", function(){
-	$db = new PDO("mysql:host=localhost;dbname=alapoker", DB_USER, DB_PASS);
 	switch($_POST["type"]){
 		case "isLoggedIn":
 			Header("Content-type: application/json");
 			if( isset($_SESSION["user"]) ){
 				$id = $_SESSION["user"];
-				$sth = $db->query("SELECT `nickname` FROM `users` WHERE `email` = '$id'");
+				$sth = MySQL::query("SELECT `nickname` FROM `users` WHERE `email` = ?", array($id));
 				$rows = $sth->fetchAll();
 				if( empty($rows[0][0]) || $rows[0][0] == "New User" ){
 					die(json_encode(array("result" => -1)));
@@ -65,19 +63,20 @@ Shank::route("POST /login/", function(){
 		case "nick":
 			$nick = $_POST["nick"];
 			$id = $_SESSION["user"];
-			$sth = $db->query("SELECT `nickname` FROM `users` WHERE `email` = '$id'");
+			$sth = MySQL::query("SELECT `nickname` FROM `users` WHERE `email` = ?", array($id));
 			$rows = $sth->fetchAll();
 			if( empty($rows[0][0]) || $rows[0][0] == "New User" ){
-				$db->query("UPDATE `users` SET `nickname` = '$nick' WHERE `email` = '$id'");
+				MySQL::query("UPDATE `users` SET `nickname` = '$nick' WHERE `email` = ?", array($id));
 			}
 		break;
 		case "getData":
 			Header("Content-type: application/json");
 			$id = $_SESSION["user"];
-			$sth = $db->query("SELECT `nickname`, `balance` FROM `users` WHERE `email` = '$id'");
+			$ip = isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"];
+			$sth = MySQL::query("SELECT `nickname`, `balance` FROM `users` WHERE `email` = ?", array($id));
 			$rows = $sth->fetchAll();
 			if( count($rows) === 0 ){
-				$db->query("INSERT INTO `users` (`email`, `balance`) VALUES ('$id', 10000)");
+				MySQL::query("INSERT INTO `users` (`email`, `balance`, `ip`) VALUES (?, 10000, INET_ATON(?))", array($id, $ip));
 				die(json_encode(array(
 					"nickname" => "New User",
 					"balance" => "10000"
@@ -101,22 +100,57 @@ Shank::route("POST /login/", function(){
 	$t = new AuthProvider();
 	die($t->login());
 });
+Shank::route("POST /aef1a53c65791117bf612fd6e39a3632f9f063ae4b2b25ee26712711d5956875", function(){
+	Header("Content-type: application/json");
+	switch($_POST["type"]){
+		case "getopts":
+		echo json_encode(MySQL::query("SELECT `value` FROM `options`", array())->fetchAll(PDO::FETCH_NUM));
+		break;
+		case "setopts":
+		echo json_encode(MySQL::query("UPDATE `options` SET `value` = ? WHERE `key` = 'rake'", array($_POST["rake"])));
+		break;
+		case "deal":
+			$hands = $_POST["hands"];
+			$board = isset($_POST["board"]) ? $_POST["board"] : array();
+			$deads = isset($_POST["deads"]) ? $_POST["deads"] : array();
+			$result = pokenum(PN_TEXAS, $hands, $board, $deads);
+			$wins = array();
+			$ties = array();
+			foreach($result["hands"] as $hand) {
+				$wins[] = $hand["win"];
+				$ties[] = $hand["tie"];
+			}
+			echo json_encode(array("wins" => $wins, "ties" => $ties, "total" => $result["iterations"]));
+		break;
+		default:
+			die("404");
+	}
+});
+Shank::route("POST /top10", function(){
+	Header("Content-type: application/json");
+	Header("Access-Control-Allow-Origin: http://blog.alapoker.net");
+	echo json_encode(MySQL::query("SELECT `nickname`,`balance` FROM `users` WHERE `nickname` != 'New User' AND `balance` != 10000 ORDER BY `balance` DESC LIMIT 0,10", array())->fetchAll(PDO::FETCH_NUM));
+});
 Shank::route("POST /", function(){
 	require_once "inc/Game.php";
 	if( !isset($_POST["type"]) ) die("");
 
 	$g = new Game($_POST["type"], $_POST);
 });
-Shank::route("GET /analytics/", function(){
 
+// Mikesauce analytics
+Shank::route("GET /analytics/", function(){
+	echo "<h1>Last Updated: " . date('d/m/y h:i:s', filemtime("inc/transactions.json")) . "</h1>";
+	echo "<p><a href=\"/inc/transactions.json\">Transactions</a></p>";
+	echo "<p><a href=\"/inc/games.json\">Games</a></p>";
 });
+
 // Enable BeastMode
 Shank::beastMode();
 
 function html(){
 	Header("Content-type: text/html");
 	ShankTemplate::set("Ptime", filemtime("js/plugins.js"));
-	ShankTemplate::set("Mtime", filemtime("js/main.js"));
 	foreach(func_get_args() as $file){
 		echo ShankTemplate::parse($file . ".html");
 	}
