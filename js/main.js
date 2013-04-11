@@ -360,8 +360,13 @@ $(document).ready(function(){
 			}
 		});
 	});
-	$(document).delegate(".reset button, button.restart", "click", function(){
+	$(document).delegate(".reset button", "click", function(){
 		if( !confirm("Are you sure you want to reset the game?\nYou will lose all yours bets.")) return;
+		reset_game();
+		$(".message").html("Choose number of hands to play!");
+	});
+	
+	$(document).delegate("button.restart", "click", function(){
 		reset_game();
 		$(".message").html("Choose number of hands to play!");
 	});
