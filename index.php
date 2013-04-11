@@ -11,8 +11,25 @@ Shank::config("debug", true);
 
 Shank::route("GET /", function(){
 	ShankTemplate::set("Mtime", filemtime("js/main.js"));
+	ShankTemplate::set("Ctime", filemtime("css/main.css"));
 	html("header", "index", "footer");
 });
+
+// Emad
+Shank::route("GET /m", function(){
+	Header("Location: /m/");
+});
+Shank::route("GET /m/", function(){
+	ShankTemplate::set("Mtime", filemtime("js/main.js"));
+	ShankTemplate::set("Ctime", filemtime("css/main.css"));
+	ShankTemplate::set("C1time", filemtime("css/m.main.css"));
+	html("m.index", "footer");
+});
+Shank::route("GET /m/m*.png", function(){
+	Header("Content-type: image/png");
+	echo file_get_contents("img/trans.png");
+});
+
 Shank::route("GET /aef1a53c65791117bf612fd6e39a3632f9f063ae4b2b25ee26712711d5956875", function(){
 	ShankTemplate::set("Atime", filemtime("js/admin.js"));
 	html("header", "admin", "footer");
@@ -140,7 +157,7 @@ Shank::route("POST /", function(){
 
 // Mikesauce analytics
 Shank::route("GET /analytics/", function(){
-	echo "<h1>Last Updated: " . date('d/m/y h:i:s', filemtime("inc/transactions.json")) . "</h1>";
+	echo "<h1>Last Updated: " . date('m/d/y h:i:s', filemtime("inc/transactions.json")) . "</h1>";
 	echo "<p><a href=\"/inc/transactions.json\">Transactions</a></p>";
 	echo "<p><a href=\"/inc/games.json\">Games</a></p>";
 });

@@ -65,7 +65,7 @@ ini_set("display_errors", true);
 	file_put_contents("transactions.json", json_encode($st1->fetchAll(PDO::FETCH_ASSOC)));
 	file_put_contents("games.json", json_encode($gameData));
 
-	echo "completed on " . date('d/m/y h:i:s');
+	echo "completed on " . date('m/d/y h:i:s');
 
     function dropround($i, $t){
     	return floor($i/$t * 10000)/100;

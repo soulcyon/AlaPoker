@@ -396,7 +396,7 @@ class Game {
 
 	public function getMultipliers($odds){
 		foreach($odds["wins"] as $k => $w)
-			$this->mults[$this->state][] = $w == 0 ? 0 : floor($this->iters / ($w + $odds["ties"][$k]/2) * 10) * $this->houseEdge / 10;
+			$this->mults[$this->state][] = $w == 0 ? 0 : floor(((($this->iters / ($w + $odds["ties"][$k]/2))) * $this->houseEdge) * 100) / 100;
 	}
 
 	public function getPlayers(){

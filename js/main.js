@@ -64,7 +64,7 @@ $(document).ready(function(){
 			.eq(i)
 			.css("z-index", 1000)
 			.transition({
-				left: (Math.random() > 0.5 ? 90 : -90)+"px",
+				left: (Math.random() > 0.5 ? 1 : -1) * (window.mobile_version ? 30 : 90) +"px",
 				marginTop: (Math.random() > 0.5 ? -1 : 1) * (Math.random() * 20 + 5) +"px"
 			}, 125, function(){
 				$(this).css("z-index", i - 1).transition({
@@ -116,7 +116,8 @@ $(document).ready(function(){
 		$("button.player").attr("disabled", true);
 		hands = parseInt($(this).html());
 		shuffle_loop(0);
-		$.post(AJAX_SCRIPT, {
+		setTimeout(function(){
+			$.post(AJAX_SCRIPT, {
 			type: "pre-flop",
 			players: hands,
 			cacheBust: new Date()
@@ -140,14 +141,14 @@ $(document).ready(function(){
 						$(this).show();
 					});
 				}
-				var a = $("<img />").attr("src", "img/cards/Back.png").addClass("fly").css("zIndex", 10000);
+				var a = $("<img />").attr("src", "/img/cards/Back.png").addClass("fly").css("zIndex", 10000);
 				$("body").append(a);
 				a.delay(i * 50).css({
 					position: "absolute",
 					top: $(".deck").offset().top,
 					left: $(".deck").offset().left,
-					width: 110,
-					height: 150,
+					width: window.mobile_version ? 50 : 100,
+					height: window.mobile_version ? 70 : 140,
 					"z-index": 1025012 - i
 				}).transition({
 					top: x,
@@ -167,6 +168,7 @@ $(document).ready(function(){
 			$(".ui").hide();
 			$(".message").html("<span class=\"bet_placeholder\">You must make at least one bet pre-flop.</span>");
 		});
+	}, 1300);
 	});
 	
 	$(document).delegate("button.flop", "click", function(){
@@ -359,6 +361,7 @@ $(document).ready(function(){
 		});
 	});
 	$(document).delegate(".reset button, button.restart", "click", function(){
+		if( !confirm("Are you sure you want to reset the game?\nYou will lose all yours bets.")) return;
 		reset_game();
 		$(".message").html("Choose number of hands to play!");
 	});
@@ -381,27 +384,9 @@ $(document).ready(function(){
 		}, 1801000);
 	}
 
-	function addHands(arr){
-		for(i = 0; i < arr.length; i++){
-			$(".hands").append(
-				$("<div />").addClass("hole").addClass("h" + i)
-				.append($("<div />").addClass("front").append(
-						$("<img />").attr("src", "img/cards/Back.png"),
-						$("<img />").attr("src", "img/cards/Back.png")
-					),
-					$("<div />").addClass("back").append(
-						$("<img />").attr("src", "img/cards/" + arr[i][0] + ".png"),
-						$("<img />").attr("src", "img/cards/" + arr[i][1] + ".png")
-					),
-					$("<div />").addClass("odds")
-				)
-			);
-		}
-	}
-
 	function updateOdds(arr, m, init){
 		if( state == 0 ){
-			for(i = 0; i < arr.wins.length; i++){
+			for(var i = 0; i < arr.wins.length; i++){
 				// Bet Table
 				$("#bet_table tbody").append(
 					$("<tr />").append(
@@ -409,7 +394,7 @@ $(document).ready(function(){
 							$("<span " + init[i][0][1].toLowerCase() + "/>").html(init[i][0][0].replace("T", "10")),
 							$("<span " + init[i][1][1].toLowerCase() + "/>").html(init[i][1][0].replace("T", "10"))
 						),
-						$("<td />").html("<div pre>$</div><input type=\"text\" /> <div am>" + Math.round(m[i]*10)/10 + "x</div>"),
+						$("<td />").html("<div pre>$</div><input type=\"text\" /> <div am>" + Math.floor(m[i]*100)/100 + "x</div>"),
 						$("<td />"),
 						$("<td />")
 					)
@@ -420,14 +405,15 @@ $(document).ready(function(){
 			}
 			$(".odds").css("opacity", 0);
 		} else {
-			for(i = 0; i < arr.wins.length; i++){
+			for(var i = 0; i < arr.wins.length; i++){
 				var obj = $(".odds").eq(i).find("strong"),
 					newNum = round(arr.wins[i]/arr.total),
 					oldNum = parseFloat($(".odds").eq(i).find("strong").eq(0).html());
 
 				var temp = $("#bet_table tbody tr").eq(i).find("input"),
 					tf0 = $("#bet_table tfoot tr").eq(1).find("td").eq(state);
-				temp.parent().next().html("<input type=\"number\" /> " + ((Math.round(m[i]*10)/10) || "0") + "x");
+				console.log(m[i], Math.floor(m[i] * 100)/100);
+				temp.parent().next().html("<input type=\"number\" /> " + ((Math.floor(m[i]*100)/100) || "0") + "x");
 				temp.parent().html("$" + (temp.val() || "0") + " (" + temp.parent().text().replace("$", "").trim() + ")");
 				tf0.html(parseInt(tf0.html() || 0) + parseInt(temp.val() || 0) + "");
 
@@ -477,33 +463,40 @@ $(document).ready(function(){
 	function round(i){
 		return Math.floor(i * 10000)/100;
 	}
+
+	function addHands(arr){
+		for(var i = 0; i < arr.length; i++){
+			$(".hands").append(makeHole("h" + i, arr[i][0], arr[i][1]).append($("<div />").addClass("odds")));
+		}
+	}
+
 	function addBoard(arr){
-		for(i = 0; i < arr.length; i++){
-			$(".board").append(
-				$("<div />").addClass("hole").addClass("b" + $(".board .hole").length)
-				.append($("<div />").addClass("front").append(
-						$("<img />").attr("src", "img/cards/Back.png")
-					),
-					$("<div />").addClass("back").append(
-						$("<img />").attr("src", "img/cards/" + arr[i] + ".png")
-					)
-				)
-			);
+		for(var i = 0; i < arr.length; i++){
+			$(".board").append(makeHole("b" + $(".board .hole").length, arr[i]));
 		}
 		$(".board img").addClass("flip");
 	}
+
 	function addDead(arr){
-		for(i = 0; i < arr.length; i++){
-			$(".deads").append(
-				$("<div />").addClass("hole").addClass("d" + $(".deads .hole").length)
-				.append($("<div />").addClass("front").append(
-						$("<img />").attr("src", "img/cards/Back.png")
-					),
-					$("<div />").addClass("back").append(
-						$("<img />").attr("src", "img/cards/" + arr[i] + ".png")
-					)
-				)
+		for(var i = 0; i < arr.length; i++){
+			$(".deads").append(makeHole("d" + $(".deads .hole").length, arr[i]));
+		}
+	}
+
+	function makeHole(prefix){
+		var f = $("<div />").addClass("front"),
+			b = $("<div />").addClass("back"),
+			t = $("<div />").addClass("hole").addClass(prefix);
+		if( window.mobile_version )
+			t.addClass("mobi");
+		for(var i = 1;i < arguments.length;i++){
+			f.append(
+				$("<img />").attr("src", "/img/cards/Back.png")
+			);
+			b.append(
+				$("<img />").attr("src", (window.mobile_version ? "m" : "/img/cards/") + arguments[i] + ".png")
 			);
 		}
+		return t.append(f, b);
 	}
 });
