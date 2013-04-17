@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set("display_errors", true);
+
 require_once "inc/Shank.php";
 require_once "inc/db.php";
 
@@ -156,6 +157,17 @@ Shank::route("POST /", function(){
 });
 
 // Mikesauce analytics
+Shank::route("GET /inc/transactions.json", function(){
+	echo "<h1>Last Updated: " . date('m/d/y h:i:s', filemtime("inc/transactions.json")) . "</h1>";
+	echo "<p><a href=\"/inc/transactions.json\">Transactions</a></p>";
+	echo "<p><a href=\"/inc/games.json\">Games</a></p>";
+});
+// Mikesauce analytics
+Shank::route("GET /inc/games.json", function(){
+	echo "<h1>Last Updated: " . date('m/d/y h:i:s', filemtime("inc/transactions.json")) . "</h1>";
+	echo "<p><a href=\"/inc/transactions.json\">Transactions</a></p>";
+	echo "<p><a href=\"/inc/games.json\">Games</a></p>";
+});
 Shank::route("GET /analytics/", function(){
 	echo "<h1>Last Updated: " . date('m/d/y h:i:s', filemtime("inc/transactions.json")) . "</h1>";
 	echo "<p><a href=\"/inc/transactions.json\">Transactions</a></p>";

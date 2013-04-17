@@ -4,7 +4,12 @@ var timeout = setTimeout(function(){
 }, 1801000);
 
 // Get rid of annoying facebook hash
+if (window.location.hash == '#http://blog.alapoker.net') window.location.hash = '';
 if (window.location.hash == '#_=_') window.location.href = '/';
+
+
+// Handle Mobile
+if ($(window).width() < 1024 ) window.location = "http://m.alapoker.net";
 
 $(document).ready(function(){
 	var AJAX_SCRIPT = "/",
@@ -37,10 +42,12 @@ $(document).ready(function(){
 				$("<span />").addClass("email").html(d.nickname),
 				$("<span />").addClass("amount").html(d.balance.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")),
 				$("<a />").attr({"href": "/logout/", "id":"logout"}).addClass("button").html("Logout").click(function(e){
-					navigator.id.logout();
-					$("#close_game").click();
-					window.location.href = "/logout/";
 					e.stopPropagation();
+					$("#close_game").click();
+					if( placed_bet ) return false;
+
+					navigator.id.logout();
+					window.location.href = "/logout/";
 					return false;
 				})
 			);
@@ -102,8 +109,9 @@ $(document).ready(function(){
 			$("#new_game").trigger("click");
 		});
 	});
-	$("#close_game").bind("click", function(){
-		if( !can_play ) return alert("Please login to start a new game!");
+	$("#close_game").bind("click", function(e){
+		if( placed_bet && !confirm("Are you sure you want to reset the game?\nYou will lose all yours bets."))
+			return false;
 
 		reset_game();
 		if( $("#close_game").is(":visible") )
@@ -233,7 +241,9 @@ $(document).ready(function(){
 			cacheBust: new Date()
 		}, function(d){
 			ajax_flag = false;
-
+			game_start = false;
+			placed_bet = false;
+			
 			addBoard(d.board);
 			addDead(d.dead);
 			updateOdds(d.odds, d.mults);
@@ -341,10 +351,12 @@ $(document).ready(function(){
 			},
 			complete: function(d){
 				ajax_flag = false;
-				$("button.place_bet").removeAttr("disabled");
+				if( !$("button.place_bet").data("won") )
+					$("button.place_bet").removeAttr("disabled");
 				if( d.status !== 200 ){
 					return alert($.parseJSON(d.responseText).error);
 				} else {
+					placed_bet = true;
 					$("button.place_bet").data("currentBet", ($("button.place_bet").data("currentBet") || 0) - totalBets);
 					var n = parseInt($(".right span.amount").html().replace(/,/g, ""));
 					$(".right span.amount").animateNumber(n - totalBets, {
@@ -361,10 +373,21 @@ $(document).ready(function(){
 		});
 	});
 	$(document).delegate(".reset button", "click", function(){
+<<<<<<< HEAD
 		if( !confirm("Are you sure you want to reset the game?\nYou will lose all yours bets.")) return;
+=======
+		if( placed_bet && !confirm("Are you sure you want to reset the game?\nYou will lose all yours bets.")) return;
 		reset_game();
-		$(".message").html("Choose number of hands to play!");
 	});
+	$(document).delegate("button.restart", "click", function(){
+>>>>>>> Fixed general game logic, 4/16 bugs
+		reset_game();
+	});
+
+	window.onbeforeunload = function() {
+		if( placed_bet )
+			return "Are you sure you want to reset the game?\nYou will lose all yours bets.";
+	};
 	
 	$(document).delegate("button.restart", "click", function(){
 		reset_game();
@@ -372,6 +395,7 @@ $(document).ready(function(){
 	});
 	
 	function reset_game(){
+		$(".message").html("Choose number of hands to play!");
 		$(".hole, img.fly").stop().remove();
 		$(".bet").find("button").html("Place Bets").end().hide();
 		$("button").removeAttr("disabled");
@@ -379,9 +403,10 @@ $(document).ready(function(){
 		$(".ui").show();
 		$("#bet_table tbody").empty();
 		$("#bet_table .totalWager").empty();
-		$("button.place_bet").data("currentBet", "");
+		$("button.place_bet").data("currentBet", "").data("won", false);
 		$.modal.close();
 		game_start = false;
+		placed_bet = false;
 		clearTimeout(timeout);
 		timeout = setTimeout(function(){
 			alert("Your session has timed out");
@@ -390,7 +415,17 @@ $(document).ready(function(){
 	}
 
 	function updateOdds(arr, m, init){
-		if( state == 0 ){
+		if( state == 0 && init ){
+			/*var temp = {};
+			for(var i = 0; i < init.length; i++){
+				temp[m[i]] = init[i];
+			}
+			m.sort(function(a, b) {
+				return Math.abs(Math.log(a - b));
+			});
+			for(var i = 0; i < init.length; i++){
+				init[i] = temp[m[i]];
+			}*/
 			for(var i = 0; i < arr.wins.length; i++){
 				// Bet Table
 				$("#bet_table tbody").append(
@@ -417,7 +452,7 @@ $(document).ready(function(){
 
 				var temp = $("#bet_table tbody tr").eq(i).find("input"),
 					tf0 = $("#bet_table tfoot tr").eq(1).find("td").eq(state);
-				console.log(m[i], Math.floor(m[i] * 100)/100);
+
 				temp.parent().next().html("<input type=\"number\" /> " + ((Math.floor(m[i]*100)/100) || "0") + "x");
 				temp.parent().html("$" + (temp.val() || "0") + " (" + temp.parent().text().replace("$", "").trim() + ")");
 				tf0.html(parseInt(tf0.html() || 0) + parseInt(temp.val() || 0) + "");
@@ -436,10 +471,14 @@ $(document).ready(function(){
 					floatStepDecimals: 2,
 					floatEndDecimals: 4
 				});
-				if( state >= 3 && newNum == 100 && !obj.hasClass("winner") ) {
+				if( state >= 2 && newNum == 100 && !obj.hasClass("winner") ) {
 					$(".hands .hole").addClass("faded");
 					obj.addClass("winner")
-					.parent().parent().removeClass("faded").append($("<div />").addClass("rays"));
+					.parent().parent().removeClass("faded").prepend($("<div />").addClass("rays"));
+
+					$(".bet button").html("Show bets");
+					$("button.place_bet").data("won", true).attr("disabled", true);
+					$("#bet_table input").remove();
 				}
 				if( oldNum >= newNum ) continue;
 
