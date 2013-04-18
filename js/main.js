@@ -4,12 +4,11 @@ var timeout = setTimeout(function(){
 }, 1801000);
 
 // Get rid of annoying facebook hash
-if (window.location.hash == '#http://blog.alapoker.net') window.location.hash = '';
+if (window.location.hash == 'http://blog.alapoker.net') window.location.hash = '';
 if (window.location.hash == '#_=_') window.location.href = '/';
 
-
-// Handle Mobile
-if ($(window).width() < 1024 ) window.location = "http://m.alapoker.net";
+// Handle Desktop
+if ($(window).width() >= 1024 ) window.location = "http://alapoker.net";
 
 $(document).ready(function(){
 	var AJAX_SCRIPT = "/",
@@ -373,14 +372,10 @@ $(document).ready(function(){
 		});
 	});
 	$(document).delegate(".reset button", "click", function(){
-<<<<<<< HEAD
-		if( !confirm("Are you sure you want to reset the game?\nYou will lose all yours bets.")) return;
-=======
 		if( placed_bet && !confirm("Are you sure you want to reset the game?\nYou will lose all yours bets.")) return;
 		reset_game();
 	});
 	$(document).delegate("button.restart", "click", function(){
->>>>>>> Fixed general game logic, 4/16 bugs
 		reset_game();
 	});
 
@@ -388,11 +383,6 @@ $(document).ready(function(){
 		if( placed_bet )
 			return "Are you sure you want to reset the game?\nYou will lose all yours bets.";
 	};
-	
-	$(document).delegate("button.restart", "click", function(){
-		reset_game();
-		$(".message").html("Choose number of hands to play!");
-	});
 	
 	function reset_game(){
 		$(".message").html("Choose number of hands to play!");

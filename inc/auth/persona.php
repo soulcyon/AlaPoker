@@ -8,7 +8,7 @@ class AuthProvider {
         curl_setopt_array($c, array(
             CURLOPT_RETURNTRANSFER  => true,
             CURLOPT_POST            => true,
-            CURLOPT_POSTFIELDS      => "assertion=" . $_POST["assertion"] . "&audience=http://alapoker.net/",
+            CURLOPT_POSTFIELDS      => "assertion=" . $_POST["assertion"] . "&audience=http://m.alapoker.net/",
             CURLOPT_SSL_VERIFYPEER  => true,
             CURLOPT_SSL_VERIFYHOST  => 2
         ));

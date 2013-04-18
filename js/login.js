@@ -17,7 +17,7 @@ $(document).ready(function(){
 	            assertion: assertion,
 	            cacheBust: new Date()
 	        }, function(msg){
-	            window.location.href = "http://alapoker.net/"
+	            window.location.href = "http://m.alapoker.net/"
 	        });
 	    },
 	    onlogout: function(){

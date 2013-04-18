@@ -23,7 +23,7 @@ class Game {
 	private function pushHandle($type, $fn){
 		$this->handles[$type] = $fn;
 	}
-
+	
 	public function __construct($type, $post){
 		ini_set("pokenum.iterations", $this->iters);
 		
@@ -85,6 +85,7 @@ class Game {
 
 			// Start the game, deal hands etc
 			$this->buildDeck();
+			//$this->deck = array("2H", "7C", "3C", "8D", "2C", "QC","AS","KS","9D", "8S", "JD", "TH");
 			$this->dealCards();
 
 			$odds = $this->getOdds();
@@ -264,7 +265,7 @@ class Game {
 					$sumOfBets += array_sum($amt); 
 				}
 				if( $totalBet > $sumOfBets ){
-					die(json(array("error" => "Your bet must be less than the pot.")));
+					die(json(array("error" => "Your bet must be less than the total pot.")));
 				}
 			} else {
 				// Assert non-empty bets and available balance
@@ -291,7 +292,7 @@ class Game {
 				die(json(array("error" => "You've exhauted your allowed number of bets")));*/
 
 			// Required to have 1 bet on pre-flop
-			if( $betCount < 1 ){
+			if( $this->state < 2 && $betCount < 1 ){
 				die(json(array("error" => "Your must bet on at least 1 hand.")));
 			}
 
@@ -353,10 +354,10 @@ class Game {
 		for($s = 0; $s < count($this->suits); $s++)
 			for($k = 0; $k < count($this->kinds); $k++)
 				$this->deck[$s * count($this->kinds) + $k] = $this->kinds[$k] . $this->suits[$s];
+		shuffle($this->deck);
 	}
 
 	private function dealCards(){
-		shuffle($this->deck);
 		for($i = 0; $i < $this->players; $i++) {
 			$this->hole[$i] = array(array_shift($this->deck));
 		}

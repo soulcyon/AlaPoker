@@ -233,36 +233,6 @@ header {
 .switched header button {
     border: 1px solid #D53A3A;
 }
-header .right {
-    float: right;
-    width: 500px;
-    text-align: right;
-    margin-top: 5px;
-}
-header .right .email {
-    padding-right: 10px;
-    font-size: 90%;
-    color: #8f8f8f;
-    vertical-align: top;
-    line-height: 20px;
-}
-header .right .email:before {
-    content: "Welcome, ";
-    vertical-align: top;
-    line-height: 20px;
-}
-header .right .amount {
-    vertical-align: top;
-    line-height: 20px;
-}
-header .right .amount:before {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    background: url(../img/coin.png) no-repeat center center;
-    content: ' ';
-    vertical-align: top;
-}
 #bet_table, #options_table {
     width: 600px;
 }
@@ -407,7 +377,6 @@ header .right .amount:before {
     left: 40px;
 }
 .hole .back img:nth-child(2){
-    -webkit-trans   
     left: 40px;
 }
 .hole .front img {
@@ -457,9 +426,6 @@ header .right .amount:before {
     z-index: 1000;
     -webkit-transform: rotateX(0deg) rotateY(0deg);
     -moz-transform: rotateX(0deg) rotateY(0deg);
-}
-.hole .back img:nth-child(1) {
-    -webkit-transform: rotateX(0deg) rotateY(0deg);
 }
 
 .hole .odds {
