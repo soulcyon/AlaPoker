@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <script type="text/javascript">
+        document.domain = "alapoker.net";
+        </script>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>A 'LA POKER</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=800,height=320 initial-scale=0.8, user-scalable=0">
+        <link rel="stylesheet" href="/css/normalize.css">
+        <link rel="stylesheet" href="/css/main.css?{{Ctime}}">
+		<link rel="stylesheet" href="/css/m.main.css?{{C1time}}">
+
+        <script type="text/javascript" src="/js/modernizr.js"></script>
+        <script type="text/javascript" src="/js/jquery.js"></script>
+        <script type="text/javascript" src="/js/plugins.js?{{Ptime}}"></script>
+        <link rel="icon" type="image/png" href="/apple-touch-icon-144x144-precomposed.png">
+        <script type="text/javascript" src="https://login.persona.org/include.js"></script>
+        <script type="text/javascript">
+            window.mobile_version = true;
+        </script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+<div class="container">
+    <div class="floor">
+        <div class="table">
+            <div class="deck">
+                <div class="shuffle">
+                    <div class="card"></div>
+                    <div class="card"></div>
+                    <div class="card"></div>
+                    <div class="card"></div>
+                    <div class="card"></div>
+                    <div class="card"></div>
+                    <div class="card"></div>
+                    <div class="card"></div>
+                </div>
+            </div>
+            <div class="ui">
+                <button class="player">2</button>
+                <button class="player">3</button>
+                <button class="player">4</button>
+                <button class="player">5</button>
+                <button class="player">6</button>
+                <button class="player">7</button>
+                <button class="player">8</button>
+                <button class="player">9</button>
+                <button class="player">10</button>
+            </div>
+            <div class="board">
+            </div>
+            <div class="deads">
+            </div>
+            <div class="hands">
+            </div>
+            <div class="reset">
+                <button>Reset Game</button>
+            </div>
+            <div class="bet">
+                <button>Place Bets</button>
+            </div>
+            
+            <div id="bet_table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Card</th>
+                            <th>Wager<br />Pre-flop</th>
+                            <th>Wager<br />Flop</th>
+                            <th>Wager<br />Turn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Wagers:</strong></td>
+                            <td class="totalWager"></td>
+                            <td class="totalWager"></td>
+                            <td class="totalWager"></td>
+                        </tr>
+                        <tr>
+                            <td colspan=4 align=center><button class="place_bet">Submit your bets</button></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="message">Choose number of hands to play!</div>
+    </div>
+</div>
+<div id="float" class="container">
+    <header>
+        <button id="close_game" class="unswitch">Close Game</button>
+        <button id="new_game" class="hidden">Start New Game</button>
+        <p class="right">
+            <span class="loading">Please wait...</span>
+        </p>
+    </header>
+    <script>
+    var d = "";
+    if( window.location.hash ){
+        d = "http://blog.alapoker.net/" + window.location.hash.substring(1);
+    } else {
+        d = document.referrer.indexOf("http://blog.alapoker.net") !== 0 ? "http://blog.alapoker.net" : document.referrer;
+        window.location.hash = d.replace("http://blog.alapoker.net/", "");
+    }
+    document.write('<iframe src="' + d + '" width=100% height=100% frameborder=0></iframe>');
+    </script>
+</div>
+<script type="text/javascript" src="/js/main.js?{{Mtime}}"></script>

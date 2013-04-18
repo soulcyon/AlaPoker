@@ -1,0 +1,157 @@
+body {
+	background: url(felt.png);
+	text-align: center;
+	color: #dedede;
+	text-shadow: 1px 1px 2px black;
+	font-family: monospace, Lucida Console, Consolas;
+}
+.container {
+	margin: 0 auto;
+	width: 1300px;
+}
+h1 {
+	font-family: "Allura";
+	font-size: 80px;
+	color: #efefef;
+	text-shadow: 1px 1px 3px black;
+	font-weight: normal;
+}
+button {
+	cursor: pointer;
+	font-size: 30px;
+	width: 50px;
+	outline: none;
+	border-radius: 3px;
+	border: 0px;
+	padding: 4px;
+	margin: 0 8px;
+	border: 1px solid white;
+	box-shadow: 0px 0px 3px #333;
+	background: #f2f6f8; /* Old browsers */
+	background: -moz-linear-gradient(top, #f2f6f8 0%, #d8e1e7 50%, #b5c6d0 51%, #e0eff9 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f2f6f8), color-stop(50%,#d8e1e7), color-stop(51%,#b5c6d0), color-stop(100%,#e0eff9)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #f2f6f8 0%,#d8e1e7 50%,#b5c6d0 51%,#e0eff9 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #f2f6f8 0%,#d8e1e7 50%,#b5c6d0 51%,#e0eff9 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #f2f6f8 0%,#d8e1e7 50%,#b5c6d0 51%,#e0eff9 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #f2f6f8 0%,#d8e1e7 50%,#b5c6d0 51%,#e0eff9 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f6f8', endColorstr='#e0eff9',GradientType=0 ); /* IE6-9 */
+}
+button:hover {
+	box-shadow: 0px 0px 10px white;
+	background: #fafbfc; /* Old browsers */
+	background: -moz-linear-gradient(top, #fafbfc 0%, #eff3f5 50%, #e0e7ec 51%, #f2f8fc 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fafbfc), color-stop(50%,#eff3f5), color-stop(51%,#e0e7ec), color-stop(100%,#f2f8fc)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #fafbfc 0%,#eff3f5 50%,#e0e7ec 51%,#f2f8fc 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #fafbfc 0%,#eff3f5 50%,#e0e7ec 51%,#f2f8fc 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #fafbfc 0%,#eff3f5 50%,#e0e7ec 51%,#f2f8fc 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #fafbfc 0%,#eff3f5 50%,#e0e7ec 51%,#f2f8fc 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafbfc', endColorstr='#f2f8fc',GradientType=0 ); /* IE6-9 */
+}
+button:active {
+	box-shadow: 0px 0px 10px black;
+	border: 1px solid black;
+	background: #acc5d2; /* Old browsers */
+	background: -moz-linear-gradient(top, #acc5d2 0%, #9cb3c2 50%, #819eaf 51%, #8ac2e8 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#acc5d2), color-stop(50%,#9cb3c2), color-stop(51%,#819eaf), color-stop(100%,#8ac2e8)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #acc5d2 0%,#9cb3c2 50%,#819eaf 51%,#8ac2e8 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #acc5d2 0%,#9cb3c2 50%,#819eaf 51%,#8ac2e8 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #acc5d2 0%,#9cb3c2 50%,#819eaf 51%,#8ac2e8 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #acc5d2 0%,#9cb3c2 50%,#819eaf 51%,#8ac2e8 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#acc5d2', endColorstr='#8ac2e8',GradientType=0 ); /* IE6-9 */
+}
+.hand {
+	display: inline-block;
+	position: relative;
+	height: 300px;
+	width: 130px;
+}
+.flop:first-child:before {
+	display: block;
+	width: 1px;
+	height: 1px;
+	background: red;
+	content: "";
+}
+.hand img, .community {
+	width: 110px;
+	height: 155px;
+}
+.hand img:nth-child(2) {
+	position: absolute;
+	left: 10px;
+	top: 48px;
+}
+.hand .prob {
+	position: relative;
+	top: 60px;
+}
+.panels {
+	display: inline-block;
+	cursor: pointer;
+}
+.panel {
+	display: inline-block;
+	position: relative;
+	width: 110px;
+	height: 155px;
+	-webkit-perspective: 600px;
+	-moz-perspective: 600px;
+}
+.panel .front {
+	float: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 900;
+
+	-webkit-transform: rotateX(0deg) rotateY(0deg);
+	-webkit-transform-style: preserve-3d;
+	-webkit-backface-visibility: hidden;
+
+	-moz-transform: rotateX(0deg) rotateY(0deg);
+	-moz-transform-style: preserve-3d;
+	-moz-backface-visibility: hidden;
+
+	-o-transition: all .4s ease-in-out;
+	-ms-transition: all .4s ease-in-out;
+	-moz-transition: all .4s ease-in-out;
+	-webkit-transition: all .4s ease-in-out;
+	transition: all .4s ease-in-out;
+}
+.panels:hover .front {
+	z-index: 900;
+	border-color: #eee;
+	background: #333;
+
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+}
+
+.panel .back {
+	float: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 800;
+	
+	-webkit-transform: rotateY(-180deg);
+	-webkit-transform-style: preserve-3d;
+	-webkit-backface-visibility: hidden;
+
+	-moz-transform: rotateY(-180deg);
+	-moz-transform-style: preserve-3d;
+	-moz-backface-visibility: hidden;
+
+	/* -- transition is the magic sauce for animation -- */
+	-o-transition: all .4s ease-in-out;
+	-ms-transition: all .4s ease-in-out;
+	-moz-transition: all .4s ease-in-out;
+	-webkit-transition: all .4s ease-in-out;
+	transition: all .4s ease-in-out;
+}
+
+.panels:hover .back {
+	z-index: 1000;
+	-webkit-transform: rotateX(0deg) rotateY(0deg);
+	-moz-transform: rotateX(0deg) rotateY(0deg);
+}

@@ -1,0 +1,31 @@
+body{
+margin: 0 auto;					/*align the header at the center*/
+text-align: center;				/*align the header at the center*/
+}
+
+
+div.card
+{
+width: 223px;					/* width of each container*/
+height: 312px;					/* height of each container*/
+position: absolute;				/* instructure each container to obey the position absolutely*/
+float: left;					/* float all the container so that they overlapped each other*/
+left: 38%;						/* align them to the center of the screen */
+}
+
+div#box1
+{
+background-image: url(../images/Back.png);
+}
+div#box2
+{
+background-image: url(../images/Back.png);
+}
+div#box3
+{
+background-image: url(../images/Back.png);
+}
+div#box4
+{
+background-image: url(../images/Back.png);
+}
