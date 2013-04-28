@@ -40,7 +40,7 @@ $(document).ready(function(){
 		}, function(d){
 			$("header .right").empty().append(
 				$("<span />").addClass("email").html(d.nickname),
-				$("<span />").addClass("amount").html(d.balance.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")),
+				$("<span />").attr("money", "").html(d.balance.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")),
 				$("<a />").attr({"href": "/logout/", "id":"logout"}).addClass("button").html("Logout").click(function(e){
 					e.stopPropagation();
 					$("#close_game").click();
@@ -255,9 +255,11 @@ $(document).ready(function(){
 				$(".totalWager").each(function(i, e){
 					win -= parseInt($(this).html() || "0");
 				});
+			} else {
+				$(".winnings").show().find("[money]").html((win + "").replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 			}
 
-			var n = parseInt($(".right span.amount").html().replace(/,/g, "")),
+			var n = parseInt($(".right span[money]").html().replace(/,/g, "")),
 				p1 = $("<div />").addClass("winout").html((Math.abs(win) + "").replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")),
 				p2 = $("<div />").addClass("wintitle").html(win < 0 ? "You Lose" : "Payout");
 
@@ -283,8 +285,8 @@ $(document).ready(function(){
 					animateOpacity: false,
 					floatStepDecimals: 0
 				}).animate({
-					top: ($(".amount").offset().top - 2) + "px",
-					left: ($(".amount").offset().left + 20) + "px",
+					top: ($(".right span[money]").offset().top - 2) + "px",
+					left: ($(".right span[money]").offset().left + 20) + "px",
 					color: "#AFAFAF",
 					fontSize: "16px",
 					padding: "0px",
@@ -295,7 +297,7 @@ $(document).ready(function(){
 					$(this).remove();
 				});
 				if( win > 0 ){
-					$(".right span.amount").animateNumber(n + win, {
+					$(".right span[money]").animateNumber(n + win, {
 						duration: 2000,
 						animateOpacity: false,
 						floatStepDecimals: 0
@@ -358,8 +360,8 @@ $(document).ready(function(){
 				} else {
 					placed_bet = true;
 					$("button.place_bet").data("currentBet", ($("button.place_bet").data("currentBet") || 0) - totalBets);
-					var n = parseInt($(".right span.amount").html().replace(/,/g, ""));
-					$(".right span.amount").animateNumber(n - totalBets, {
+					var n = parseInt($(".right span[money]").html().replace(/,/g, ""));
+					$(".right span[money]").animateNumber(n - totalBets, {
 						duration: 500,
 						animateOpacity: false,
 						floatStepDecimals: 0
@@ -373,14 +375,10 @@ $(document).ready(function(){
 		});
 	});
 	$(document).delegate(".reset button", "click", function(){
-<<<<<<< HEAD
-		if( !confirm("Are you sure you want to reset the game?\nYou will lose all yours bets.")) return;
-=======
 		if( placed_bet && !confirm("Are you sure you want to reset the game?\nYou will lose all yours bets.")) return;
 		reset_game();
 	});
 	$(document).delegate("button.restart", "click", function(){
->>>>>>> Fixed general game logic, 4/16 bugs
 		reset_game();
 	});
 
@@ -400,6 +398,7 @@ $(document).ready(function(){
 		$(".bet").find("button").html("Place Bets").end().hide();
 		$("button").removeAttr("disabled");
 		$(".reset").hide();
+		$(".winnings").hide();
 		$(".ui").show();
 		$("#bet_table tbody").empty();
 		$("#bet_table .totalWager").empty();

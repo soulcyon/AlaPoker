@@ -350,12 +350,12 @@ header .right {
     text-align: right;
     margin-top: 5px;
     margin-right: 20px;
+    color: #222;
 }
 
 header .right .email {
     padding-right: 10px;
     font-size: 90%;
-    color: #3f3f3f;
     vertical-align: top;
     line-height: 20px;
 }
@@ -366,19 +366,36 @@ header .right .email:before {
     line-height: 20px;
 }
 
-header .right .amount {
+span[money] {
     vertical-align: top;
     line-height: 20px;
-    color: #222;
 }
 
-header .right .amount:before {
+span[money]:before {
     display: inline-block;
     width: 20px;
     height: 20px;
     background: url(../img/coin.png) no-repeat center center;
     content: ' ';
     vertical-align: top;
+}
+
+.winnings {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 85px;
+    font-size: 18px !important;
+    text-shadow: 0px 0px 2px black !important;
+    color: #ffcc00 !important;
+}
+
+.winnings [money] {
+    margin-top: 3px;
+    display: inline-block;
+    border-top: 1px solid white;
+    padding-top: 5px;
+    width: 140px;
 }
 
 #bet_table,#options_table {
