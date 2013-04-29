@@ -86,6 +86,8 @@ $(document).ready(function(){
 		if( !can_play ) return alert("Please login to start a new game!");
 		if( ajax_flag ) return;
 
+		$("html, body", $("iframe")[0].contentWindow.document).animate({ scrollTop: 0 }, "slow");
+
 		var closing = $("#float").hasClass("switched");
 		game_start = closing;
 
