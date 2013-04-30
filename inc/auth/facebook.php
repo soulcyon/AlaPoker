@@ -13,8 +13,8 @@ class AuthProvider {
 	}
 	public function login(){
 		return $this->fb->getLoginUrl(array(
-			"redirect_uri" => "http://beta.alapoker.net/facebook/?complete=true",
-			"cancel_uri" => "http://beta.alapoker.net/facebook/?cancel=true",
+			"redirect_uri" => "http://beta.alapoker.net/facebook/complete",
+			"cancel_uri" => "http://beta.alapoker.net/facebook/cancel",
 			"scope" => "email"
 		));
 	}

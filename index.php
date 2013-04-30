@@ -1,8 +1,11 @@
 <?php
 
+session_start();
+
 $f3 = require("lib/base.php");
 $f3->set("AUTOLOAD","inc/");
 $f3->set("UI","ui/");
+$f3->set("DEBUG", 3);
 $f3->set("DB", require("db.php"));
 
 // Generic resource handling
@@ -27,6 +30,7 @@ $f3->route("GET /@folder/@file.@type", function($e){
 
 // Homepage
 $f3->route("GET /", function($e){
+	$e->set("loggedin", isset($_SESSION["user"]) ? "true" : "false");
 	return parseTemplate("index");
 });
 
