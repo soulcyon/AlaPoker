@@ -35,7 +35,7 @@ $f3->route("GET /login", function($e){
 	if( isset($_SESSION["user"]) ){
 		return $e->reroute("/");
 	}
-	return parseTemplate("login");
+	return parseTemplate("login", "Login");
 });
 
 // Logout
@@ -61,8 +61,10 @@ $f3->route("POST /api/@action", "Game->@action");
 
 $f3->run();
 
-function parseTemplate($e){
+function parseTemplate($e, $title = "default"){
 	global $f3;
+
+	$f3->set("title", $title);
 	$f3->set("page", $e);
 	echo Template::instance()->render("$e.html");
 }

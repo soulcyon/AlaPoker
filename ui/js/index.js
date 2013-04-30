@@ -24,7 +24,21 @@ $(document).ready(function(){
 				nick: nick
 			});
 		} else if( d.result !== true ){
-			return $("header .right").html("<a href=\"/login/\" class=\"button\">Login</a>");
+			navigator.id.watch({
+			    onlogin: function(assertion) {
+			        $.post('/login/persona', {
+			            assertion: assertion,
+			            cacheBust: new Date()
+			        }, function(msg){
+			        	return;
+			            window.location.href = "http://beta.alapoker.net/";
+			        });
+			    },
+			    onlogout: function(){
+			        window.location.href = "http://beta.alapoker.net/logout";
+			    }
+			});
+			return $("body").find("#ui").hide().end().find("#login").show();
 		}
 
 		can_play = true;
@@ -46,6 +60,23 @@ $(document).ready(function(){
 				})
 			);
 		})
+	});
+
+	$("#flushright input").bind("focus", function(){
+		$(this).parent().find("label").hide();
+	});
+	$("#flushright input").bind("blur", function(){
+		if( $(this).val() != "" ) return;
+		$(this).parent().find("label").show();
+	});
+	$("#facebook").click(function(){
+		$.post("/login/facebook", {}, function(url){
+			window.location.href = url;
+		});
+		return false;
+	});
+	$("#persona").click(function(){
+		navigator.id.request();
 	});
 
 	var game_start = false,
