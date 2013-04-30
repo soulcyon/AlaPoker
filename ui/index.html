@@ -1,27 +1,72 @@
 <include href="header.html" />
 <script type="text/javascript" src="https://login.persona.org/include.js"></script>
-<div id="loginbox"><div id="shine"></div>
-	<div id="gright1">
-		<p>
-			<label>E-mail</label><input type="text" name="email" />
-		</p>
-		<p>
-			<label>Password</label><input type="password" name="pass" />
-		</p>
-		<p>
-			<a href="#">Forgot password?</a> <a href="#">Sign Up</a> 
-		</p>
-	</div>
-	<div id="gright2">
-		<p class="delegate">
-			<a href="#" id="facebook"></a>
-			<a href="#" id="persona"></a>
-		</p>
-		<p>
-			<button id="submit">Login</button>
-		</p>
-	</div>
+<div id="loginbox">
+    <div id="shine"></div>
+    <check if="{{ @loggedin=='true' }}">
+        <true>
+            <div id="header3">
+                <p id="left">
+                    <span class="name"></span>
+                </p>
+                <p id="right">
+                    <span money></span>
+                    <button class="button" id="logout">Logout</button>
+                </p>
+            </div>
+        </true>
+        <false>
+            <div id="header2">
+                <p class="delegate">
+                    <a href="#" id="facebook" class="button" title="Connect with Facebook"></a>
+                    <a href="#" id="persona" class="button" title="Connect with Persona"></a>
+                    <button id="opendialog" class="button">Login</button>
+                </p>
+            </div>
+        </false>
+    </check>
 </div>
+<check if="{{ @loggedin=='true' }}"><false>
+<div id="logindialog">
+    <table>
+        <tr>
+            <td>
+                <h1>Login</h1>
+                <form id="loginform">
+                    <p>
+                        <label>E-mail</label><input type="text" name="email" />
+                    </p>
+                    <p>
+                        <label>Password</label><input type="password" name="pass" />
+                    </p>
+                    <p>
+                        <input type="submit" class="button2" value="Login" />
+                    </p>
+                </form>
+            </td>
+            <td class="right">
+                <h1>Sign up</h1>
+                <form id="registerform">
+                    <p>
+                        <label>E-mail</label><input type="text" name="email" />
+                    </p>
+                    <p>
+                        <label>Nickname</label><input type="text" name="nick" />
+                    </p>
+                    <p>
+                        <label>Password</label><input type="password" name="pass1" />
+                    </p>
+                    <p>
+                        <label>Confirm Password</label><input type="password" name="pass2" />
+                    </p>
+                    <p>
+                        <input type="submit" class="button2" value="Register" />
+                    </p>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</false></check>
 <div id="container">
 	<div id="table">
 		<div id="logo"></div>
@@ -95,7 +140,7 @@
                 </tfoot>
             </table>
         </div>
+        <div id="message">Login or Sign up to start playing!</div>
     </div>
-    <div id="message">Login or Sign up to start playing!</div>
 </div>
 <include href="footer.html" />

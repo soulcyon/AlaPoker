@@ -11,7 +11,6 @@ class API {
 		while($i--){
 			$str = self::transform(bin2hex(keccak_hash($str)));
 		}
-		var_dump(bin2hex(keccak_hash($str)));
 		return bin2hex($str);
 	}
 	private static function transform($test){

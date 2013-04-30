@@ -13,6 +13,7 @@ body {
 	background: -o-radial-gradient(center, ellipse cover, rgba(12,107,113,1) 0%,rgba(8,98,100,1) 100%);
 	background: -ms-radial-gradient(center, ellipse cover, rgba(12,107,113,1) 0%,rgba(8,98,100,1) 100%);
 	background: radial-gradient(ellipse at center, rgba(12,107,113,1) 0%,rgba(8,98,100,1) 100%);
+	display: none;
 }
 
 #container {
@@ -187,6 +188,8 @@ header {
 }
 
 span[money] {
+	display: inline-block;
+	margin-top: 6px;
 	line-height: 20px;
 	vertical-align: top;
 }
@@ -296,10 +299,10 @@ span[money]:before {
 		#bet_table td > span {
 			display: inline-block;
 			height: 30px;
-	width: 45px;
+			width: 45px;
 			padding-left: 12px;
 			font-size: 125%;
-	font-weight: bold;
+			font-weight: bold;
 			text-align: left;
 			line-height: 30px;
 			vertical-align: middle;
@@ -312,7 +315,7 @@ span[money]:before {
 		#bet_table td > span:after {
 			display: inline-block;
 			height: 18px;
-	width: 18px;
+			width: 18px;
 			-moz-background-size: 18px 18px !important;
 			-webkit-background-size: 18px 18px !important;
 			background-size: 18px 18px !important;
@@ -323,9 +326,16 @@ span[money]:before {
 	color: red
 }
 
+#ui {
+	position: absolute;
+	top: 296px;
+	width: 100%;
+	text-align: center
+}
+
 #message {
 	position: absolute;
-	top: 60%;
+	top: 450px;
 	left: 0px;
 	width: 100%;
 	color: white;
@@ -339,13 +349,6 @@ span[money]:before {
 	font-family: Arial;
 	text-shadow: 0px 0px 5px black;
 	transition: all 0.7s ease-out;
-}
-
-#ui {
-	position: absolute;
-	top: 38%;
-	width: 100%;
-	text-align: center
 }
 
 #message button {
@@ -837,22 +840,21 @@ span[money]:before {
 	box-shadow: 0px 0px 10px black;
 }
 
-#loginbox a {
+#loginbox, #loginbox a {
 	color: #efefef;
 }
 
-#loginbox #gright1 {
+#loginbox #header2 {
 	position: absolute;
-	top: 6px;
-	right: 80px;
+	top: 10px;
+	right: 20px;
 	text-align: right;
 }
 
-#loginbox #gright2 {
-	position: absolute;
-	top: 7px;
-	right: 20px;
+#loginbox #header3 #right {
+	float: right;
 	text-align: right;
+	margin-top: 4px;
 }
 
 #loginbox p {
@@ -860,32 +862,102 @@ span[money]:before {
 	margin: 2px;
 }
 
-#loginbox p > label {
-	position: absolute;
-	font-size: 10px;
-	top: 7px;
-	left: 31px;
+#loginbox #logout {
+	vertical-align: top;
+	margin-left: 10px;
 }
 
-#loginbox p input {
+#loginbox #header3 p {
+	display: inline-block;
+}
+
+#loginbox #header3 #left {
+	width: 250px;
+}
+
+#loginbox #header3 span.name {
+	margin-top: 4px;
+	display: inline-block;
+}
+
+#loginbox #header3 span.name:before {
+	content: "Welcome ";
+}
+
+#loginbox #header3 span.name:after {
+	content: "!";
+}
+
+#loginbox #header3 p {
+	padding: 10px 20px;
+	line-height: 20px;
+	vertical-align: middle;
+}
+
+#logindialog a {
+	text-decoration: underline;
+}
+
+#logindialog {
+	width: 500px;
+}
+
+#logindialog p {
+	position: relative;
+	margin: 4px 0px;
+}
+
+#logindialog table {
+	width: 100%;
+}
+
+#logindialog td {
+	vertical-align: top;
+}
+
+#logindialog td.right {
+	text-align: right;
+}
+
+#logindialog td.right p > label {
+	left: 86px;
+}
+
+#logindialog p > label {
+	position: absolute;
+	font-size: 12px;
+	top: 6px;
+	left: 12px;
+}
+
+#logindialog p input[type=submit] {
+	padding: 6px 16px;
+}
+
+#logindialog p input[type=text], #logindialog p input[type=password] {
 	border-radius: 4px;
-	box-shadow: 0px 0px 3px inset black;
+	box-shadow: inset 0px 0px 5px black;
 	outline: none;
-	font-size: 10px;
-	padding: 4px;
+	padding: 6px 12px;
 	width: 150px;
+	font-size: 12px;
+	border: 0px;
+	background: transparent;
 }
 
 #loginbox button {
-	padding: 4px;
-	width: 52px;
-	font-size: 12px;
+	padding: 7px 16px;
+}
+
+#loginbox .button:hover {
+
 }
 
 #loginbox .delegate a {
 	display: inline-block;
 	height: 21px;
 	width: 22px;
+	padding: 6px;
 }
 
 #loginbox #facebook {

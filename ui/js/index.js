@@ -24,59 +24,38 @@ $(document).ready(function(){
 				nick: nick
 			});
 		} else if( d.result !== true ){
+			shuffle_loop(0);
+			$.getScript("/js/login.js", function(){
+				console.log("login script loaded");
+			});
+			return $("body").find("#ui").hide().end().find("#header2").show();
+		} else {
+			$("#message").html("Choose number of hands to play.");
 			navigator.id.watch({
 			    onlogin: function(assertion) {
-			        $.post('/login/persona', {
-			            assertion: assertion,
-			            cacheBust: new Date()
-			        }, function(msg){
-			        	return;
-			            window.location.href = "http://beta.alapoker.net/";
-			        });
 			    },
 			    onlogout: function(){
 			        window.location.href = "http://beta.alapoker.net/logout";
 			    }
 			});
-			return $("body").find("#ui").hide().end().find("#login").show();
 		}
 
 		can_play = true;
-		$("#new_game, #load_game").removeClass("hidden");
-		$("header .right").html("Gathering your information...");
-
 		$.post(LOGIN_SCRIPT + "data", {}, function(d){
-			$("header .right").empty().append(
-				$("<span />").addClass("email").html(d.nickname),
-				$("<span />").attr("money", "").html(d.balance.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")),
-				$("<a />").attr({"href": "/logout/", "id":"logout"}).addClass("button").html("Logout").click(function(e){
-					e.stopPropagation();
-					$("#close_game").click();
-					if( placed_bet ) return false;
+			$("#header3 .name").html(d.nickname);
+			$("#header3 span[money]").html(d.balance.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+			$("#header3 #logout").click(function(e){
+				$(this).animate({
+					right: "-100px"
+				}, 125);
+				e.stopPropagation();
+				if( placed_bet ) return false;
 
-					navigator.id.logout();
-					window.location.href = "/logout/";
-					return false;
-				})
-			);
-		})
-	});
-
-	$("#flushright input").bind("focus", function(){
-		$(this).parent().find("label").hide();
-	});
-	$("#flushright input").bind("blur", function(){
-		if( $(this).val() != "" ) return;
-		$(this).parent().find("label").show();
-	});
-	$("#facebook").click(function(){
-		$.post("/login/facebook", {}, function(url){
-			window.location.href = url;
+				navigator.id.logout();
+			    window.location.href = "http://beta.alapoker.net/logout";
+				return false;
+			});
 		});
-		return false;
-	});
-	$("#persona").click(function(){
-		navigator.id.request();
 	});
 
 	var game_start = false,
@@ -94,7 +73,7 @@ $(document).ready(function(){
 				i = j % 8;
 			$("div.card")
 			.eq(i)
-			.css("z-index", 1000)
+			.css("z-index", 500)
 			.transition({
 				left: (Math.random() > 0.5 ? 1 : -1) * (window.mobile_version ? 30 : 90) +"px",
 				marginTop: (Math.random() > 0.5 ? -1 : 1) * (Math.random() * 20 + 5) +"px"
@@ -107,30 +86,6 @@ $(document).ready(function(){
 			});
 		};
 
-	$("#new_game").bind("click", function(){
-		if( !can_play ) return alert("Please login to start a new game!");
-		if( ajax_flag ) return;
-
-		$("html, body", $("iframe")[0].contentWindow.document).animate({ scrollTop: 0 }, "slow");
-
-		var closing = $("#float").hasClass("switched");
-		game_start = closing;
-
-		$("#float").toggleClass("switched");
-
-		if( closing ){
-			$(".players .card, #board .card, .dead .card").remove();
-			$("#ui").show();
-		}
-	});
-	$("#close_game").bind("click", function(e){
-		if( placed_bet && !confirm("Are you sure you want to reset the game?\nYou will lose all yours bets."))
-			return false;
-
-		reset_game();
-		if( $("#close_game").is(":visible") )
-			$("#new_game").trigger("click");
-	});
 	$("button.player").bind("click", function(){
 		if( ajax_flag ) return;
 
@@ -342,6 +297,8 @@ $(document).ready(function(){
 	// Initialize Modal
 	$("#bet_table").modal();
 	$.modal.close();
+	$("#logindialog").modal();
+	$.modal.close();
 
 	$(document).delegate("button.place_bet", "click", function(){
 		if( ajax_flag ) return;
@@ -551,4 +508,6 @@ $(document).ready(function(){
 		}
 		return t.append(f, b);
 	}
+
+	$("body").css("display", "block");
 });
