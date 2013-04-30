@@ -1,0 +1,77 @@
+<include href="header.html" />
+<div id="container">
+	<div id="table">
+		<div id="logo"></div>
+        <div id="deck">
+            <div id="shuffle">
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+            </div>
+        </div>
+        <div id="ui">
+            <button class="player">2</button>
+            <button class="player">3</button>
+            <button class="player">4</button>
+            <button class="player">5</button>
+            <button class="player">6</button>
+            <button class="player">7</button>
+            <button class="player">8</button>
+            <button class="player">9</button>
+            <button class="player">10</button>
+        </div>
+        <div id="board">
+        </div>
+        <div id="deads">
+        </div>
+        <div id="hands">
+        </div>
+        <div id="reset">
+            <button>Reset Game</button>
+        </div>
+        <div id="bet">
+            <button>Place Bets</button>
+        </div>
+        <div id="winnings">
+            <strong>Winnings</strong><br /><span money></span>
+        </div>
+        <div id="bet_table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Card</th>
+                        <th>Wager<br />Pre-flop</th>
+                        <th>Wager<br />Flop</th>
+                        <th>Wager<br />Turn</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total Wagers:</strong></td>
+                        <td class="totalWager"></td>
+                        <td class="totalWager"></td>
+                        <td class="totalWager"></td>
+                    </tr>
+                    <tr>
+                        <td colspan=4 align=center><button class="place_bet">Submit your bets</button></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div id="message">Choose number of hands to play!</div>
+</div>
+<include href="footer.html" />
