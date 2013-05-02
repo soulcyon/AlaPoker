@@ -6,22 +6,24 @@ var timeout = setTimeout(function(){
 if (window.location.hash == '#http://blog.alapoker.net') window.location.hash = '';
 if (window.location.hash == '#_=_') window.location.href = '/';
 
-
-// Handle Mobile
-//if ($(window).width() < 1024 ) window.location = "http://m.alapoker.net";
-
 $(document).ready(function(){
-	var AJAX_SCRIPT = "/api/",
-		LOGIN_SCRIPT = "/login/";
+	var AJAX_SCRIPT = "/game/",
+		LOGIN_SCRIPT = "/auth/";
 
+$(window).load(function(){
+	$(["10C.png","3D.png","5H.png","7S.png","AC.png","JD.png","QH.png","close.png","10D.png","3H.png","5S.png","8C.png","AD.png","JH.png","QS.png","coin.png","10H.png","3S.png","6C.png","8D.png","AH.png","JS.png","S.png","facebook.png","10S.png","4C.png","6D.png","8H.png","AS.png","KC.png","TC.png","image.png","2C.png","4D.png","6H.png","8S.png","Back.png","KD.png","TD.png","persona.png","2D.png","4H.png","6S.png","9C.png","C.png","KH.png","TH.png","rays.png","2H.png","4S.png","7C.png","9D.png","D.png","KS.png","TS.png","table.png","2S.png","5C.png","7D.png","9H.png","H.png","QC.png","alapoker.png","trans.png","3C.png","5D.png","7H.png","9S.png","JC.png","QD.png","cardsprite.png"]).preload();
+
+	$("body").css("display", "block");
+});
 	// Check login and load user data
 	$.post(LOGIN_SCRIPT + "verify", {}, function(d){
 		if( d.result === -1 ){
 			var nick = prompt("Please enter a public nickname for your account: ", "");
 			if( nick === null ) nick = "New User";
-			$(".right .email").html(nick);
 			$.post(LOGIN_SCRIPT + "nick", {
 				nick: nick
+			}, function(d){
+				$("#left .name").html(nick);
 			});
 		} else if( d.result !== true ){
 			shuffle_loop(0);
@@ -35,7 +37,6 @@ $(document).ready(function(){
 			    onlogin: function(assertion) {
 			    },
 			    onlogout: function(){
-			        window.location.href = "http://beta.alapoker.net/logout";
 			    }
 			});
 		}
@@ -43,7 +44,8 @@ $(document).ready(function(){
 		can_play = true;
 		$.post(LOGIN_SCRIPT + "data", {}, function(d){
 			$("#header3 .name").html(d.nickname);
-			$("#header3 span[money]").html(d.balance.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+			$("#header3 span[money]").html(prettyNum(d.balance));
+			$("#bet_data .balance span[money]").html(prettyNum(parseInt($("#right span[money]").text().replace(/,/g,""))));
 			$("#header3 #logout").click(function(e){
 				$(this).animate({
 					right: "-100px"
@@ -52,7 +54,7 @@ $(document).ready(function(){
 				if( placed_bet ) return false;
 
 				navigator.id.logout();
-			    window.location.href = "http://beta.alapoker.net/logout";
+			    window.location.href = "/logout";
 				return false;
 			});
 		});
@@ -74,11 +76,11 @@ $(document).ready(function(){
 			$("div.card")
 			.eq(i)
 			.css("z-index", 500)
-			.transition({
+			.animate({
 				left: (Math.random() > 0.5 ? 1 : -1) * (window.mobile_version ? 30 : 90) +"px",
 				marginTop: (Math.random() > 0.5 ? -1 : 1) * (Math.random() * 20 + 5) +"px"
 			}, 125, function(){
-				$(this).css("z-index", i - 1).transition({
+				$(this).css("z-index", i - 1).animate({
 					left: 0+"px",
 					marginTop: 0+"px"
 				}, 100);
@@ -107,40 +109,68 @@ $(document).ready(function(){
 			$("#bet").show();
 			$("#reset").show();
 
-			$("#hands img").each(function(i, e){
-				var x = $(e).offset().top,
-					y = $(e).offset().left;
-				if( $(e).parent().hasClass("front") ){
-					return $(e).hide().delay(i * 50 + 5).transition({
-						"z-index": 0
-					}, function(){
-						$(this).show();
-					});
+			var len = $("#hands .hole").length,
+				holePositions = [0,2,4,6,8,9,7,5,3,1],
+				lessDelay = 0;
+			$("#hands .front img").css("opacity", 0);
+			for(var o = 0; o < holePositions.length; o++){
+				if( holePositions[o] >= len ) {
+					lessDelay++;
+					continue;
 				}
-				var a = $("<img />").attr("src", "/img/Back.png").addClass("fly").css("zIndex", 10000);
+				var i = holePositions[o],
+					off = $("#hands .front").eq(i).find("img").eq(0).offset(),
+					a = $("<img />").attr("src", "/img/Back.png").addClass("fly").data("i", i),
+					newLeft = off.left,
+					newTop = off.top;
 				$("body").append(a);
-				a.delay(i * 50).css({
+				a.delay((o - lessDelay) * 100).css({
 					position: "absolute",
 					top: $("#deck").offset().top,
 					left: $("#deck").offset().left,
 					width: window.mobile_version ? 50 : 100,
 					height: window.mobile_version ? 70 : 140,
-					"z-index": 1025012 - i
-				}).transition({
-					top: x,
-					left: y
+					zIndex: 500 - i
+				}).animate({
+					top: newTop,
+					left: newLeft
 				}, 250, function(){
+					$("#hands .front").eq($(this).data("i")).find("img").eq(0).css("opacity", 1);
 					$(this).remove();
-					$(e).animate({
-						"z-index": 0
-					}, 400, function(){
-						$(this).parent().parent().find("img").addClass("flip");
-						$(this).parent().parent().find(".odds").delay(500).transition({
-							opacity: 1
-						}, 200);
-					});
-				})
-			});
+					$(this).animate({
+						zIndex: 0
+					}, len * 200, function(){
+						$("#hands img").addClass("flip");
+					})
+				});
+			}
+			lessDelay = 0;
+			for(var o = 0; o < holePositions.length; o++){
+				if( holePositions[o] >= len ) {
+					lessDelay++;
+					continue;
+				}
+				var i = holePositions[o],
+					off = $("#hands .front").eq(i).find("img").eq(1).offset(),
+					a = $("<img />").attr("src", "/img/Back.png").addClass("fly").data("i", i),
+					newLeft = off.left,
+					newTop = off.top;
+				$("body").append(a);
+				a.delay((o - lessDelay) * 100 + len*100).css({
+					position: "absolute",
+					top: $("#deck").offset().top,
+					left: $("#deck").offset().left,
+					width: window.mobile_version ? 50 : 100,
+					height: window.mobile_version ? 70 : 140,
+					zIndex: 500 - i
+				}).animate({
+					top: newTop,
+					left: newLeft
+				}, 250, function(){
+					$("#hands .front").eq($(this).data("i")).find("img").eq(1).css("opacity", 1);
+					$(this).remove();
+				});
+			}
 			$("#ui").hide();
 			$("#message").html("<span class=\"bet_placeholder\">You must make at least one bet pre-flop.</span>");
 		});
@@ -164,10 +194,11 @@ $(document).ready(function(){
 			addBoard(d.board);
 			addDead(d.dead);
 			updateOdds(d.odds, d.mults);
+
 			if( push_flag ) {
 				$(".push.turn").trigger("click");
 			} else {
-				$("#message").html("Click <button class=\"turn\">turn</button> or make a bet!");
+				$("#message").html("Click <button class=\"turn button\">turn</button> or make a bet!");
 			}
 		});
 	});
@@ -192,7 +223,7 @@ $(document).ready(function(){
 			if( push_flag ) {
 				$(".push.river").trigger("click");
 			} else {
-				$("#message").html("Click <button class=\"river\">river</button> or make a bet!");
+				$("#message").html("Click <button class=\"river button\">river</button> or make a bet!");
 			}
 		});
 	});
@@ -215,25 +246,31 @@ $(document).ready(function(){
 
 			$("#bet button").html("Show bets");
 			$("button.place_bet").attr("disabled", true);
+			$("#hands").addClass("gameover");
+
 			var win = Math.floor(d.payout);
+			var wagerSum = 0;
+			$(".totalWager").each(function(i,e){wagerSum += parseInt($(this).text() || 0);});
+			$("#bet_data .wager span[money]").html(prettyNum(wagerSum));
 			if( win <= 0 ){
 				$(".totalWager").each(function(i, e){
 					win -= parseInt($(this).html() || "0");
 				});
-			} else {
-				$("#winnings").show().find("[money]").html((win + "").replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+				wagerSum = 0;
 			}
+			var payout = -(wagerSum - win);
+			$("#bet_data .payout span[money]").html((payout > 0 ? "+" : "-") + prettyNum(Math.abs(payout)));	
 
-			var n = parseInt($(".right span[money]").html().replace(/,/g, "")),
-				p1 = $("<div />").addClass("winout").html((Math.abs(win) + "").replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")),
+			var n = parseInt($("#bet_data .balance span[money]").html().replace(/,/g, "")),
+				p1 = $("<div />").addClass("winout").html(prettyNum(Math.abs(win))),
 				p2 = $("<div />").addClass("wintitle").html(win < 0 ? "You Lose" : "Payout");
 
 			$(".floor").append(p1, p2);
-			p1.transition({
+			p1.animate({
 				top: (($(window).height() - p1.outerHeight()) / 2) + "px",
 				left: (($(window).width() - p1.outerWidth()) / 2) + "px"
 			}, 1);
-			p2.css("width", p1.width() + "px").transition({
+			p2.css("width", p1.width() + "px").animate({
 				top: (($(window).height() - p2.outerHeight()) / 2) - 93 + "px",
 				left: (($(window).width() - p2.outerWidth()) / 2) + "px"
 			}, 1);
@@ -250,8 +287,8 @@ $(document).ready(function(){
 					animateOpacity: false,
 					floatStepDecimals: 0
 				}).animate({
-					top: ($(".right span[money]").offset().top - 2) + "px",
-					left: ($(".right span[money]").offset().left + 20) + "px",
+					top: ($("#bet_data .balance span[money]").offset().top - 2) + "px",
+					left: ($("#bet_data .balance span[money]").offset().left + 20) + "px",
 					color: "#AFAFAF",
 					fontSize: "16px",
 					padding: "0px",
@@ -261,16 +298,19 @@ $(document).ready(function(){
 					p2.remove();
 					$(this).remove();
 				});
-				if( win > 0 ){
-					$(".right span[money]").animateNumber(n + win, {
-						duration: 2000,
-						animateOpacity: false,
-						floatStepDecimals: 0
-					});
+				if( n + win > 0 ){
+					$("#right span[money]").css("color", "green").animate({"color": "rgb(239, 239, 239)"});
+				} else {
+					$("#right span[money]").css("color", "red").animate({"color": "rgb(239, 239, 239)"});
 				}
+				$("#right span[money], #bet_data .balance span[money]").animateNumber(n + win, {
+					duration: 2000,
+					animateOpacity: false,
+					floatStepDecimals: 0
+				});
 			});
 			$("#reset").hide();
-			$("#message").html("<button class=\"restart\">Play Again</button>");
+			$("#message").html("<button class=\"restart button\">Play Again</button>");
 		});
 	});
 	$(document).delegate("button.riverPush", "click", function(){
@@ -326,15 +366,22 @@ $(document).ready(function(){
 				} else {
 					placed_bet = true;
 					$("button.place_bet").data("currentBet", ($("button.place_bet").data("currentBet") || 0) - totalBets);
-					var n = parseInt($(".right span[money]").html().replace(/,/g, ""));
-					$(".right span[money]").animateNumber(n - totalBets, {
+					var n = parseInt($("#bet_data .balance span[money]").html().replace(/,/g, ""));
+					$("#bet_data .wager span[money]").animateNumber(totalBets, {
 						duration: 500,
 						animateOpacity: false,
 						floatStepDecimals: 0
 					});
-					$("#bet_placeholder").html(
-						$("<button />").addClass(hands < 0 ? "riverPush" : "flop").html(hands < 0 ? "River" : "Flop")
-					);
+					$("#bet_data .balance span[money]").animateNumber(n - totalBets, {
+						duration: 500,
+						animateOpacity: false,
+						floatStepDecimals: 0
+					});
+					if( state == 1 )
+						$("#message").html(
+							$("<button />").addClass(hands < 0 ? "riverPush button" : "flop button").html(hands < 0 ? "River" : "Flop")
+						);
+
 					$.modal.close();
 				}
 			}
@@ -357,6 +404,10 @@ $(document).ready(function(){
 		reset_game();
 		$("#message").html("Choose number of hands to play!");
 	});
+
+	function prettyNum(i){
+		return (i+"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
 	
 	function reset_game(){
 		$("#message").html("Choose number of hands to play!");
@@ -369,6 +420,9 @@ $(document).ready(function(){
 		$("#bet_table tbody").empty();
 		$("#bet_table .totalWager").empty();
 		$("button.place_bet").data("currentBet", "").data("won", false);
+		$("#hands").removeClass("gameover");
+		$("#bet_data p:not(.balance) span[money]").html(0);
+
 		$.modal.close();
 		game_start = false;
 		placed_bet = false;
@@ -381,16 +435,6 @@ $(document).ready(function(){
 
 	function updateOdds(arr, m, init){
 		if( state == 0 && init ){
-			/*var temp = {};
-			for(var i = 0; i < init.length; i++){
-				temp[m[i]] = init[i];
-			}
-			m.sort(function(a, b) {
-				return Math.abs(Math.log(a - b));
-			});
-			for(var i = 0; i < init.length; i++){
-				init[i] = temp[m[i]];
-			}*/
 			for(var i = 0; i < arr.wins.length; i++){
 				// Bet Table
 				$("#bet_table tbody").append(
@@ -408,19 +452,20 @@ $(document).ready(function(){
 				$(".odds").eq(i).html("Win: <strong>" + round(arr.wins[i]/arr.total) + "</strong><br />" + 
 				"Tie: <strong>" + round(arr.ties[i]/arr.total) + "</strong>");
 			}
-			$(".odds").css("opacity", 0);
 		} else {
 			for(var i = 0; i < arr.wins.length; i++){
 				var obj = $(".odds").eq(i).find("strong"),
 					newNum = round(arr.wins[i]/arr.total),
 					oldNum = parseFloat($(".odds").eq(i).find("strong").eq(0).html());
-
-				var temp = $("#bet_table tbody tr").eq(i).find("input"),
+					
+				var temp = $("#bet_table tbody tr").eq(i).find("td").eq(state),
 					tf0 = $("#bet_table tfoot tr").eq(1).find("td").eq(state);
 
-				temp.parent().next().html("<input type=\"number\" /> " + ((Math.floor(m[i]*100)/100) || "0") + "x");
-				temp.parent().html("$" + (temp.val() || "0") + " (" + temp.parent().text().replace("$", "").trim() + ")");
-				tf0.html(parseInt(tf0.html() || 0) + parseInt(temp.val() || 0) + "");
+				m[i] = m[i] || 0;
+
+				tf0.html((parseInt(tf0.html() || 0) + parseInt(temp.find("input").val() || 0)) + "");
+				temp.next().html("<input type=\"number\" /> " + ((Math.floor(m[i]*100)/100) || "0") + "x");
+				temp.html("$" + (temp.find("input").val() || "0") + " (" + temp.text().replace("$", "").trim() + ")");
 
 				obj.eq(0).animateNumber(newNum, {
 					duration: 500,
@@ -509,5 +554,7 @@ $(document).ready(function(){
 		return t.append(f, b);
 	}
 
-	$("body").css("display", "block");
+	$("#loginbox").click(function(){
+		$("#janrainView div > div > a").parent().hide();
+	});
 });

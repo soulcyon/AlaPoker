@@ -1,6 +1,7 @@
 html {
 	height: 100%;
-	width: 100%
+	width: 100%;
+	overflow: hidden;
 }
 
 body {
@@ -18,9 +19,8 @@ body {
 
 #container {
 	height: 100%;
-	width: 1400px;
+	width: 830px;
 	margin: 0 auto;
-	overflow: hidden
 }
 
 #table {
@@ -38,43 +38,7 @@ body {
 		margin: 0 auto;
 		position: relative;
 		top: 50px;
-	}
-
-	#table button {
-		position: relative;
-		color: #fff;
-		text-decoration:none;
-		line-height: 25px;
-		text-shadow: -1px -1px 0 #111;
-		border: 1px solid #313131;
-		background: #474747;
-		background: -moz-linear-gradient(top, #474747 0%, #313131 100%);
-		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#474747), color-stop(100%,#313131));
-		background: -webkit-linear-gradient(top, #474747 0%,#313131 100%);
-		background: -o-linear-gradient(top, #474747 0%,#313131 100%);
-		background: -ms-linear-gradient(top, #474747 0%,#313131 100%);
-		background: linear-gradient(to bottom, #474747 0%,#313131 100%);
-		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#474747', endColorstr='#313131',GradientType=0 );
-		border-radius: 10px;
-		box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #111, 0 4px 2px rgba(0, 0, 0, .5);
-		cursor: pointer;
-		outline: none;
-	}
-
-	#table button:active, #table button[disabled] {
-		box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 2px 0 #111, 0 2px 0px rgba(0, 0, 0, .5);
-		top: 2px;
-	}
-
-	#table button:hover {
-		background: #313131;
-		background: -moz-linear-gradient(top, #313131 0%, #474747 98%);
-		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#313131), color-stop(98%,#474747));
-		background: -webkit-linear-gradient(top, #313131 0%,#474747 98%);
-		background: -o-linear-gradient(top, #313131 0%,#474747 98%);
-		background: -ms-linear-gradient(top, #313131 0%,#474747 98%);
-		background: linear-gradient(to bottom, #313131 0%,#474747 98%);
-		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#313131', endColorstr='#474747',GradientType=0 );
+		margin-bottom: -310px;
 	}
 
 #logo {
@@ -191,16 +155,16 @@ span[money] {
 	display: inline-block;
 	margin-top: 6px;
 	line-height: 20px;
-	vertical-align: top;
 }
 
 span[money]:before {
 	display: inline-block;
 	height: 20px;
 	width: 20px;
-	background: url(../img/coin.png) no-repeat center center;
+	background: url(../img/coin.png) no-repeat center right;
 	content: ' ';
 	vertical-align: top;
+	margin-right: 2px;
 }
 
 #winnings {
@@ -248,7 +212,8 @@ span[money]:before {
 	}
 
 	#bet_table td {
-		width: 150px
+		width: 150px;
+		position: relative;
 	}
 
 		#bet_table td > span[c]:after {
@@ -261,9 +226,9 @@ span[money]:before {
 
 		#bet_table td > div[pre] {
 			display: inline-block;
-	position: relative;
+			position: relative;
 			left: -86px;
-	top: 2px
+			top: 2px
 		}
 
 		#bet_table td > span[d], #bet_table td > span[h] {
@@ -279,9 +244,10 @@ span[money]:before {
 		}
 
 		#bet_table td > div[am] {
-			float: right;
 			color: #555;
-			text-align: right
+			position: absolute;
+			right: 0px;
+			top: 0px;
 		}
 
 		#bet_table td > input {
@@ -335,7 +301,7 @@ span[money]:before {
 
 #message {
 	position: absolute;
-	top: 450px;
+	top: 440px;
 	left: 0px;
 	width: 100%;
 	color: white;
@@ -351,7 +317,14 @@ span[money]:before {
 	transition: all 0.7s ease-out;
 }
 
-#message button {
+#message .button {
+	padding: 4px 20px;
+	font-size: 17px;
+	color: white;
+	text-shadow: 1px 0px 2px black;
+}
+
+/*#message button {
 	position: relative;
 	top: -6px;
 	padding: 4px 16px 6px 16px;
@@ -370,12 +343,6 @@ span[money]:before {
 	text-shadow: 0px -1px 1px #4d211e;
 }
 
-#reset {
-	position: absolute;
-	left: 500px;
-	top: 60px
-}
-
 #message button:active, #message button[disabled] {
 	top: -1px;
 	-webkit-box-shadow: inset 0 1px 10px 1px #ee665c, 0 1px 0 #4d201d, 0 2px 0 #53221f, 0 4px 3px 0 #111111;
@@ -386,12 +353,36 @@ span[money]:before {
 	-webkit-box-shadow: inset 0 0px 20px 1px #ff8f87, 0px 1px 0 #4d201d, 0 6px 0px #53221f, 0 8px 4px 1px #111111;
 	box-shadow: inset 0 0px 20px 1px #ff8f87, 0px 1px 0 #4d201d, 0 6px 0px #53221f, 0 8px 4px 1px #111111;
 	cursor: pointer;
-}
+}*/
 
-#bet, .payout {
+#reset {
 	position: absolute;
 	left: 500px;
-	top: 10px
+	top: 120px
+}
+
+#bet {
+	position: absolute;
+	left: 500px;
+	top: 80px
+}
+
+#bet_data {
+	position: absolute;
+	top: 0px;
+	left: 80px;
+	color: #efefef;
+	text-shadow: 0px 1px 0px black;
+}
+
+#bet_data p {
+	float: left;
+	width: 250px;
+	vertical-align: bottom;
+}
+
+#bet_data strong {
+	vertical-align: bottom;
 }
 
 #deck {
@@ -406,35 +397,39 @@ span[money]:before {
 
 		#deck #shuffle .card {
 			float: left;
-	position: absolute;
+			position: absolute;
 			height: 140px;
-	width: 100px;
+			width: 100px;
 			background: url(../img/Back.png) no-repeat center center;
 			background-size: 100px 140px;
 			z-index: 10;
 		}
-
+	
 #hands {
-	position: relative
+	left: 16px;
 }
 
-	#hands .hole {
-		height: 300px;
-	width: 130px
-	}
+#hands, #board, #deads {
+	position: relative;
+	margin: 0 auto;
+	width: 830px;
+}
 
-#hands {
-	display: inline-block;
-	cursor: pointer
+#hands:hover .odds, #hands.gameover {
+	opacity: 1 !important;
 }
 
 .hole {
 	display: inline-block;
 	position: absolute;
 	height: 140px;
-	width: 100px;
+	width: 140px;
 	-moz-perspective: 600px;
+	-o-perspective: 600px;
+	-ms-perspective: 600px;
 	-webkit-perspective: 600px;
+	perspective: 600px;
+	cursor: pointer;
 }
 
 	.hole .front img.flip, #deads:hover .hole .front img {
@@ -457,25 +452,34 @@ span[money]:before {
 
 	.hole .front img {
 		float: none;
-	position: absolute;
+		position: absolute;
 		left: 0;
-	top: 0;
+		top: 0;
 		-moz-backface-visibility: hidden;
-		-moz-transform: rotateX(0deg) rotateY(0deg);
+		-moz-transform: rotateX(0deg);
 		-moz-transform-style: preserve-3d;
-		-moz-transition: all .4s ease-in-out;
-		-ms-transform: rotateX(0deg) rotateY(0deg);
+		-moz-transition: -moz-transform .4s ease-in-out;
+
+		-ms-backface-visibility: hidden;
+		-ms-transform: rotateX(0deg);
 		-ms-transform-style: preserve-3d;
-		-ms-transition: all .4s ease-in-out;
-		-o-transform: rotateX(0deg) rotateY(0deg);
-		-o-transition: all .4s ease-in-out;
+		-ms-transition: -ms-transform .4s ease-in-out;
+
+		-ms-backface-visibility: hidden;
+		-ms-transform: rotateX(0deg);
+		-ms-transform-style: preserve-3d;
+		-ms-transition: -ms-transform .4s ease-in-out;
+
 		-webkit-backface-visibility: hidden;
-		-webkit-transform: rotateX(0deg) rotateY(0deg);
+		-webkit-transform: rotateX(0deg);
 		-webkit-transform-style: preserve-3d;
-		-webkit-transition: all .4s ease-in-out;
-		transform: rotateX(0deg) rotateY(0deg);
+		-webkit-transition: -webkit-transform .4s ease-in-out;
+
+
+		backface-visibility: hidden;
+		transform: rotateX(0deg);
 		transform-style: preserve-3d;
-		transition: all .4s ease-in-out;
+		transition: transform .4s ease-in-out;
 		z-index: 900;
 	}
 
@@ -485,20 +489,34 @@ span[money]:before {
 
 	.hole .back img {
 		float: none;
-	position: absolute;
+		position: absolute;
 		left: 0;
-	top: 0;
+		top: 0;
+
 		-moz-backface-visibility: hidden;
 		-moz-transform: rotateY(-180deg);
 		-moz-transform-style: preserve-3d;
-		-moz-transition: all .4s ease-in-out;
-		-ms-transition: all .4s ease-in-out;
-		-o-transition: all .4s ease-in-out;
+		-moz-transition: -moz-transform .4s ease-in-out;
+
+		-ms-backface-visibility: hidden;
+		-ms-transform: rotateY(-180deg);
+		-ms-transform-style: preserve-3d;
+		-ms-transition: -ms-transform .4s ease-in-out;
+
+		-o-backface-visibility: hidden;
+		-o-transform: rotateY(-180deg);
+		-o-transform-style: preserve-3d;
+		-o-transition: -o-transform .4s ease-in-out;
+
 		-webkit-backface-visibility: hidden;
 		-webkit-transform: rotateY(-180deg);
 		-webkit-transform-style: preserve-3d;
-		-webkit-transition: all .4s ease-in-out;
-		transition: all .4s ease-in-out;
+		-webkit-transition: -webkit-transform .4s ease-in-out;
+
+		backface-visibility: hidden;
+		transform: rotateY(-180deg);
+		transform-style: preserve-3d;
+		transition: transform .4s ease-in-out;
 		z-index: 800;
 	}
 
@@ -514,12 +532,19 @@ span[money]:before {
 	.hole .odds {
 		position: absolute;
 		left: 41px;
-	top: 94px;
+		top: 94px;
 		width: 98px;
 		color: #333;
 		text-align: center;
 		background: rgba(255, 255, 255, 0.92);
 		border-radius: 5px;
+		opacity: 0;
+		z-index: 1001;
+		-moz-transition: opacity .2s;
+		-ms-transition: opacity .2s;
+		-o-transition: opacity .2s;
+		-webkit-transition: opacity .2s;
+		transition: opacity .2s;
 	}
 
 		.hole .odds strong:after {
@@ -528,7 +553,7 @@ span[money]:before {
 
 	.hole img {
 		height: 140px;
-	width: 100px
+		width: 100px
 	}
 
 .faded {
@@ -845,16 +870,12 @@ span[money]:before {
 }
 
 #loginbox #header2 {
-	position: absolute;
-	top: 10px;
-	right: 20px;
 	text-align: right;
 }
 
 #loginbox #header3 #right {
 	float: right;
 	text-align: right;
-	margin-top: 4px;
 }
 
 #loginbox p {
@@ -865,14 +886,24 @@ span[money]:before {
 #loginbox #logout {
 	vertical-align: top;
 	margin-left: 10px;
+	text-shadow: 0px 1px 0px rgb(150, 0, 0);
 }
 
 #loginbox #header3 p {
 	display: inline-block;
 }
 
-#loginbox #header3 #left {
-	width: 250px;
+#loginbox p#left {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 400px;
+	text-align: left;
+	padding-left: 20px;
+	line-height: 52px;
+	vertical-align: middle;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 #loginbox #header3 span.name {
@@ -950,95 +981,35 @@ span[money]:before {
 }
 
 #loginbox .button:hover {
-
+	text-shadow: 0px 0px 5px white;
 }
 
-#loginbox .delegate a {
+#loginbox .delegate {
+	position: absolute;
+	top: 10px;
+	right: 20px;
+}
+
+#loginbox .delegate span {
 	display: inline-block;
 	height: 21px;
 	width: 22px;
 	padding: 6px;
+	cursor: pointer;
 }
 
 #loginbox #facebook {
 	background: url(../img/facebook.png) no-repeat center center;
 }
 
-#loginbox #persona {
-	background: url(../img/persona.png) no-repeat center center;
+#loginbox #google {
+	background: url(../img/google.png) no-repeat center center;
 }
 
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) { 
-	#rakeOpt:before, body.TOUCH, #rakeOpt div {
-		-ms-touch-action: none
-	}
-
-	#rakeOpt:before {
-		display: block;
-	position: absolute;
-		left: -25%;
-	top: -150%;
-		height: 400%;
-	width: 150%;
-		content: "";
-		z-index: -1;
-	}
-
-	#rakeOpt.vertical:before {
-		left: -150%;
-	top: -25%;
-		height: 150%;
-	width: 400%
-	}
+#loginbox #paypal {
+	background: url(../img/pp.png) no-repeat center center;
 }
 
-#rakeOpt {
-	border: 1px solid #908d84;
-	border-radius: 3px;
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+
 }
-
-#rakeOpt.connect a, #rakeOpt.connect.lower {
-	background: #b2a98f
-}
-
-	#rakeOpt, #rakeOpt.connect.lower a {
-		background: #d9d7cb;
-		box-shadow: inset 0px 1px 7px #b6b4a8;
-	}
-
-#rakeOpt.disabled, #rakeOpt.disabled.connect.lower a {
-	background: #ccc;
-	box-shadow: none;
-}
-
-	#rakeOpt.disabled div {
-		background: transparent
-	}
-
-#rakeOpt.horizontal {
-	height: 10px;
-	width: 300px
-}
-
-	#rakeOpt.horizontal div {
-		margin: -5px 0px 5px -9px
-	}
-
-	#rakeOpt.horizontal a {
-		right: 0;
-		height: 100%
-	}
-
-#rakeOpt.vertical {
-	height: 300px;
-	width: 10px
-}
-
-	#rakeOpt.vertical div {
-		margin: -9px 0 0 -5px
-	}
-
-	#rakeOpt.vertical a {
-		bottom: 0;
-		width: 100%
-	}

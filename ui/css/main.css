@@ -95,7 +95,7 @@ textarea {
     outline: none;
     border: 0px;
     background: transparent;
-    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.8);
     color: #dadada;
 }
 
@@ -115,6 +115,43 @@ textarea {
     -moz-box-shadow: 0 1px 3px black;
     -webkit-box-shadow: 0 1px 3px black;
     box-shadow: 0 1px 3px black;
+}
+
+.button3 {
+    position: relative;
+    color: #fff;
+    text-decoration:none;
+    line-height: 25px;
+    text-shadow: -1px -1px 0 #111;
+    border: 1px solid #313131;
+    background: #474747;
+    background: -moz-linear-gradient(top, #474747 0%, #313131 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#474747), color-stop(100%,#313131));
+    background: -webkit-linear-gradient(top, #474747 0%,#313131 100%);
+    background: -o-linear-gradient(top, #474747 0%,#313131 100%);
+    background: -ms-linear-gradient(top, #474747 0%,#313131 100%);
+    background: linear-gradient(to bottom, #474747 0%,#313131 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#474747', endColorstr='#313131',GradientType=0 );
+    border-radius: 10px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #111, 0 4px 2px rgba(0, 0, 0, .5);
+    cursor: pointer;
+    outline: none;
+}
+
+.button3:active, .button3[disabled] {
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 2px 0 #111, 0 2px 0px rgba(0, 0, 0, .5);
+    top: 2px;
+}
+
+.button3:hover {
+    background: #313131;
+    background: -moz-linear-gradient(top, #313131 0%, #474747 98%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#313131), color-stop(98%,#474747));
+    background: -webkit-linear-gradient(top, #313131 0%,#474747 98%);
+    background: -o-linear-gradient(top, #313131 0%,#474747 98%);
+    background: -ms-linear-gradient(top, #313131 0%,#474747 98%);
+    background: linear-gradient(to bottom, #313131 0%,#474747 98%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#313131', endColorstr='#474747',GradientType=0 );
 }
 
 .chromeframe {

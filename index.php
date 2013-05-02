@@ -1,11 +1,16 @@
 <?php
+define("session.cookie_lifetime", 1800);
+define("session.gc_maxlifetime", 1800);
 
+// Sessions only, no long-term cookies
 session_start();
 
+require_once "inc/API.php";
+require_once "inc/Auth.php";
+require_once "inc/Game.php";
+
 $f3 = require("lib/base.php");
-$f3->set("AUTOLOAD","inc/");
 $f3->set("UI","ui/");
-$f3->set("DEBUG", 3);
 $f3->set("DB", require("db.php"));
 
 // Generic resource handling
@@ -34,14 +39,6 @@ $f3->route("GET /", function($e){
 	return parseTemplate("index");
 });
 
-// Login
-$f3->route("GET /login", function($e){
-	if( isset($_SESSION["user"]) ){
-		return $e->reroute("/");
-	}
-	return parseTemplate("login", "Login");
-});
-
 // Logout
 $f3->route("GET /logout", function($e){
 	session_destroy();
@@ -56,20 +53,22 @@ $f3->route("GET /admin", function($e){
 	return parseTemplate("admin");
 });
 
-// User auth handling
-$f3->route("POST /login/@action", "Login::@action");
-$f3->route("GET /facebook/*", "Login::facebookVerify");
+// User Auth Handle
+$f3->route("POST /auth/@action", "Auth::@action");
 
-// API Handle
-$f3->route("POST /api/@action", "Game->@action");
+// Game API Handle
+$f3->route("POST /game/@action", "Game->@action");
 
 $f3->run();
 
 function parseTemplate($e, $title = "default"){
 	global $f3;
 
+	$js = "ui/js/$e.js";
+
 	$f3->set("title", $title);
 	$f3->set("page", $e);
+	$f3->set("ptime", file_exists($js) ? filemtime($js) : "");
 	echo Template::instance()->render("$e.html");
 }
 

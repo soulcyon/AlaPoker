@@ -1,6 +1,4 @@
 <?php
-define("session.cookie_lifetime", 1800);
-define("session.gc_maxlifetime", 1800);
 class Game extends API {
 	// Generic globals
 	private $kinds = array("2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A");
@@ -265,6 +263,7 @@ class Game extends API {
 			}
 		}
 
+		// Assert bet before pre-flop
 		if( $this->state > 1 ){
 			foreach($this->amounts as $amt){
 				$sumOfBets += array_sum($amt); 
@@ -278,16 +277,16 @@ class Game extends API {
 			}
 		}
 
-		// Check balance
+		// Assert bet less than balance
 		$email = $_SESSION["user"];
-		$rows = $this->DB->exec("SELECT `index`, `balance` FROM `users` WHERE `email` = ?", $email);
+		$rows = $this->DB->exec("SELECT `balance` FROM `users` WHERE `email` = ?", $email);
 		if( $totalBet > intval($rows[0]["balance"]) ){
 			die(self::json(array("error" => "Your bet must be less than your balance")));
 		}
 
 		$betCount = count(array_diff($candidateAmounts, $blank));
 
-		// Required to have 1 bet on pre-flop
+		// 
 		if( $betCount < 1 ){
 			die(self::json(array("error" => "Your must bet on at least 1 hand.")));
 		}
