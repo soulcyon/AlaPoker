@@ -1,5 +1,5 @@
 <?php
-class Login extends API {
+class Auth extends API {
 	public static function register($e){
 		$DB = $e->get("DB");
 
@@ -63,7 +63,7 @@ class Login extends API {
 		$result = false;
 		$id = $_SESSION["user"];
 		$rows = $DB->exec("SELECT nickname FROM users WHERE email=?", $id);
-		if( empty($rows[0][0]) || $rows[0][0] == "New User" ){
+		if( empty($rows[0]) || $rows[0]["nickname"] == "New User" ){
 			$nick = $_POST["nick"];
 			$DB->exec("UPDATE users SET nickname = ? WHERE email=?", array(1=>$nick, 2=>$id));
 			$result = true;
@@ -88,29 +88,46 @@ class Login extends API {
 			"balance" => $rows[0]["balance"]
 		));
 	}
-	public static function facebook($e){
-		require_once "inc/auth/facebook.php";
-		$t = new AuthProvider();
-		echo self::json($t->login());
-	}
-	public static function facebookVerify($e){
-		require_once "inc/auth/facebook.php";
-		$t = new AuthProvider();
-		if( ($_SESSION["user"] = $t->isLoggedIn()) ){
-			Header("Location: /");
-		} else {
-			Header("Location: /login/");
+	public static function janrain($e){
+		if( !isset($_POST["token"]) ){
+			return Header("Location: /");
 		}
-	}
-	public static function persona($e){
-		require_once "inc/auth/persona.php";
-		$t = new AuthProvider();
-		$t->login();
+		$token = $_POST["token"];
+		$res = json_decode(Auth::rain(array(
+			"token" => $token,
+			"apiKey" => "9cc9fa11fef4c01c327c1c296e5a25460b0c9ea4"
+		)), true);
+		if( $res["stat"] === "ok" ){
+			$_SESSION["user"] = $res["profile"]["email"];
+		}
+		Header("Location: /");
 	}
 	public static function raw($e){
-		require_once "inc/auth/raw.php";
+		require_once "inc/providers/raw.php";
 		$t = new AuthProvider();
 		$t->login();
+	}
+	private static function rain($fields){
+		$url = 'https://rpxnow.com/api/v2/auth_info';
+		$fields_string = "";
+
+		foreach($fields as $key=>$value) {
+			$fields_string .= $key.'='.$value.'&';
+		}
+		rtrim($fields_string, '&');
+
+		$ch = curl_init();
+
+		curl_setopt($ch,CURLOPT_URL, $url);
+		curl_setopt($ch,CURLOPT_POST, count($fields));
+		curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER, 1);
+
+		$result = curl_exec($ch);
+
+		curl_close($ch);
+
+		return $result;
 	}
 }
 ?>

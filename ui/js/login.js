@@ -8,15 +8,6 @@ $(document).ready(function(){
 		if( $(this).val() != "" ) return;
 		$(this).parent().find("label").show();
 	});
-	$("#facebook").click(function(){
-		$.post("/login/facebook", {}, function(url){
-			window.location.href = url;
-		});
-		return false;
-	});
-	$("#persona").click(function(){
-		navigator.id.request();
-	});
 	$("#opendialog").click(function(){
 		$("#logindialog").modal({
 			zIndex: 600
@@ -26,7 +17,7 @@ $(document).ready(function(){
 		if( ajax_flag ) return false;
 
 		ajax_flag = true;
-		$.post("/login/rawAuth", $(this).serialize(), function(d){
+		$.post("/auth/rawAuth", $(this).serialize(), function(d){
 			ajax_flag = false;
 			if( d.length == 0 ){
 				return alert("Invalid Username or Password");
@@ -40,7 +31,7 @@ $(document).ready(function(){
 		if( ajax_flag ) return false;
 
 		ajax_flag = true;
-		$.post("/login/register", $(this).serialize(), function(d){
+		$.post("/auth/register", $(this).serialize(), function(d){
 			ajax_flag = false;
 			if( d.error ){
 				return alert(d.error);
@@ -52,11 +43,11 @@ $(document).ready(function(){
 	});
 	navigator.id.watch({
 	    onlogin: function(assertion) {
-	        $.post('/login/persona', {
+	        $.post('/auth/persona', {
 	            assertion: assertion,
 	            cacheBust: new Date()
 	        }, function(msg){
-	            window.location.href = "http://beta.alapoker.net/";
+	            window.location.href = "/";
 	        });
 	    },
 	    onlogout: function(){

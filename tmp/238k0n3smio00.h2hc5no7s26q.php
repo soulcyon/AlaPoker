@@ -1,40 +1,31 @@
-<include href="header.html" />   
+<?php echo $this->render('header.html',$this->mime,get_defined_vars()); ?>
 <script type="text/javascript" src="https://login.persona.org/include.js"></script>
 <div id="loginbox">
     <div id="shine"></div>
-    <check if="{{ @loggedin=='true' }}">
-        <true>
+    <?php if ($loggedin=='true'): ?>
+        
             <div id="header3">
                 <p id="left">
-                    <button onclick="window.location.href='http://blog.alapoker.net'" class="button">Home</button>
-                    <button onclick="window.location.href='http://blog.alapoker.net/about'" class="button">About</button>
-                    &nbsp;&nbsp;<span class="name"></span>
+                    <span class="name"></span>
                 </p>
                 <p id="right">
                     <span money></span>
                     <button class="button" id="logout">Logout</button>
                 </p>
             </div>
-        </true>
-        <false>
+        
+        <?php else: ?>
             <div id="header2">
-                <p id="left">
-                    <button onclick="window.location.href='http://blog.alapoker.net'" class="button">Home</button>
-                    <button onclick="window.location.href='http://blog.alapoker.net/about'" class="button">About</button>
-                </p>
                 <p class="delegate">
-                    <a class="janrainEngage">
-                        <span id="facebook" class="button"></span>
-                        <span id="google" class="button"></span>
-                        <span id="paypal" class="button"></span>
-                    </a>
+                    <a href="#" id="facebook" class="button" title="Connect with Facebook"></a>
+                    <a href="#" id="persona" class="button" title="Connect with Persona"></a>
                     <button id="opendialog" class="button">Login</button>
                 </p>
             </div>
-        </false>
-    </check>
+        
+    <?php endif; ?>
 </div>
-<check if="{{ @loggedin=='true' }}"><false>
+<?php if ($loggedin=='true'): ?><?php else: ?>
 <div id="logindialog">
     <table>
         <tr>
@@ -75,7 +66,7 @@
         </tr>
     </table>
 </div>
-</false></check>
+<?php endif; ?>
 <div id="container">
 	<div id="table">
 		<div id="logo"></div>
@@ -160,4 +151,4 @@
         <div id="message">Login or Sign up to start playing!</div>
     </div>
 </div>
-<include href="footer.html" />
+<?php echo $this->render('footer.html',$this->mime,get_defined_vars()); ?>
