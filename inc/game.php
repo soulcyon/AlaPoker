@@ -39,7 +39,7 @@ class Game extends API {
 		}
 		$_SESSION['LAST_ACTIVITY'] = time();
 
-		if( !isset($_SESSION["user"]) ) die(json_encode(array("error" => "Please login.")));
+		if( !isset($_SESSION["user"]) ) die(json_encode(array("error" => "Please login."), 417));
 
 		// Initialize variables
 		$this->state = isset($_SESSION["state"]) ? $_SESSION["state"] : 0;
@@ -75,10 +75,10 @@ class Game extends API {
 
 	public function preFlop($e){
 		if(!isset($_SESSION["user"]))
-			die(self::json(array("error" => "Not logged in")));
+			die(self::json(array("error" => "Not logged in"), 417));
 
 		if($_POST["players"] < 2 || $_POST["players"] > 10)
-			die(self::json(array("error" => "Invalid number of players.")));
+			die(self::json(array("error" => "Invalid number of players."), 417));
 
 		// New game started, reset all game variables
 		$this->state = 0;
@@ -131,7 +131,7 @@ class Game extends API {
 		$this->totalBet = $this->updateBets($this->amounts[$this->state - 1]);
 
 		if($preFlopCount == 0)
-			die(self::json(array("error" => "No bets made pre-flop.")));
+			die(self::json(array("error" => "No bets made pre-flop."), 417));
 
 		$this->dead[0] = array_shift($this->deck); 
 		$this->board[0] = array_shift($this->deck); 
@@ -160,7 +160,7 @@ class Game extends API {
 		$this->totalBet = $this->updateBets($this->amounts[$this->state - 1]);
 
 		if($preFlopCount == 0)
-			die(self::json(array("error" => "No bets made pre-flop.")));
+			die(self::json(array("error" => "No bets made pre-flop."), 417));
 
 		$this->dead[1] = array_shift($this->deck);
 		$this->board[3] = array_shift($this->deck); 
@@ -187,7 +187,7 @@ class Game extends API {
 		$this->totalBet = $this->updateBets($this->amounts[$this->state - 1]);
 
 		if($preFlopCount == 0)
-			die(self::json(array("error" => "No bets made pre-flop.")));
+			die(self::json(array("error" => "No bets made pre-flop."), 417));
 
 		$this->dead[2] = array_shift($this->deck); 
 		$this->board[4] = array_shift($this->deck); 
@@ -244,7 +244,7 @@ class Game extends API {
 
 	public function bet($e){
 		if(count($_POST["amounts"]) != $this->players){
-			die(self::json(array("error" => "Invalid number of bets")));
+			die(self::json(array("error" => "Invalid number of bets"), 417));
 		}
 
 		$blank = array(0, "", false, null);
@@ -256,9 +256,9 @@ class Game extends API {
 		foreach($candidateAmounts as $amt){
 			if($amt){
 				if(!is_numeric($amt) || intval($amt) != $amt)
-					die(self::json(array("error" => "Invalid bet amount: \$$amt")));
+					die(self::json(array("error" => "Invalid bet amount: \$$amt"), 417));
 				if($amt < 0)
-					die(self::json(array("error" => "You bet must be more than $0")));
+					die(self::json(array("error" => "You bet must be more than $0"), 417));
 				$totalBet += intval($amt);
 			}
 		}
@@ -269,11 +269,11 @@ class Game extends API {
 				$sumOfBets += array_sum($amt); 
 			}
 			if( $totalBet > $sumOfBets ){
-				die(self::json(array("error" => "Your bet must be less than the pot.")));
+				die(self::json(array("error" => "Your bet must be less than the pot."), 417));
 			}
 		} else {
 			if( $totalBet <= 0 ){
-				die(self::json(array("error" => "Your bet must be more than $0")));
+				die(self::json(array("error" => "Your bet must be more than $0"), 417));
 			}
 		}
 
@@ -281,14 +281,14 @@ class Game extends API {
 		$email = $_SESSION["user"];
 		$rows = $this->DB->exec("SELECT `balance` FROM `users` WHERE `email` = ?", $email);
 		if( $totalBet > intval($rows[0]["balance"]) ){
-			die(self::json(array("error" => "Your bet must be less than your balance")));
+			die(self::json(array("error" => "Your bet must be less than your balance"), 417));
 		}
 
 		$betCount = count(array_diff($candidateAmounts, $blank));
 
 		// 
 		if( $betCount < 1 ){
-			die(self::json(array("error" => "Your must bet on at least 1 hand.")));
+			die(self::json(array("error" => "Your must bet on at least 1 hand."), 417));
 		}
 
 		$this->amounts[$this->state - 1] = $_POST["amounts"];
@@ -314,9 +314,9 @@ class Game extends API {
 		foreach($arr as $amt){
 			if($amt){
 				if(!is_numeric($amt) || intval($amt) != $amt)
-					die(self::json(array("error" => "Invalid bet amount: \$$amt")));
+					die(self::json(array("error" => "Invalid bet amount: \$$amt"), 417));
 				if($amt < 0)
-					die(self::json(array("error" => "You bet must be more than $0")));
+					die(self::json(array("error" => "You bet must be more than $0"), 417));
 				$totalBet += intval($amt);
 			}
 		}

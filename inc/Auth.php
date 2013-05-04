@@ -23,7 +23,7 @@ class Auth extends API {
 			$_POST["pass1"] != $_POST["pass2"] )
 			die(self::json(array("error" => "Passwords do not match")));
 
-		mail("$id", "AlaPoker :: Thanks for signing up!", "Your password is $pass");
+		mail("$id", "AlaPoker :: Thanks for signing up!", "Your password is " . $_POST["pass1"]);
 
 		echo self::json($DB->exec("INSERT INTO `users` (`email`, `balance`, `ip`, `nickname`, `pass`)
 			VALUES (?, 10000, INET_ATON(?), ?, ?)", array(1=>$id, 2=>$ip, 3=>$nick, 4=>$pass)));

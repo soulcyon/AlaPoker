@@ -10,13 +10,9 @@ $(document).ready(function(){
 	var AJAX_SCRIPT = "/game/",
 		LOGIN_SCRIPT = "/auth/";
 
-$(window).load(function(){
-	$(["10C.png","3D.png","5H.png","7S.png","AC.png","JD.png","QH.png","close.png","10D.png","3H.png","5S.png","8C.png","AD.png","JH.png","QS.png","coin.png","10H.png","3S.png","6C.png","8D.png","AH.png","JS.png","S.png","facebook.png","10S.png","4C.png","6D.png","8H.png","AS.png","KC.png","TC.png","image.png","2C.png","4D.png","6H.png","8S.png","Back.png","KD.png","TD.png","persona.png","2D.png","4H.png","6S.png","9C.png","C.png","KH.png","TH.png","rays.png","2H.png","4S.png","7C.png","9D.png","D.png","KS.png","TS.png","table.png","2S.png","5C.png","7D.png","9H.png","H.png","QC.png","alapoker.png","trans.png","3C.png","5D.png","7H.png","9S.png","JC.png","QD.png","cardsprite.png"]).preload();
-
-	$("body").css("display", "block");
-});
 	// Check login and load user data
 	$.post(LOGIN_SCRIPT + "verify", {}, function(d){
+		$("body").css("display", "block");
 		if( d.result === -1 ){
 			var nick = prompt("Please enter a public nickname for your account: ", "");
 			if( nick === null ) nick = "New User";
@@ -554,7 +550,7 @@ $(window).load(function(){
 		return t.append(f, b);
 	}
 
-	$("#loginbox").click(function(){
+	$(".janrainEngage").click(function(){
 		$("#janrainView div > div > a").parent().hide();
 	});
 });
