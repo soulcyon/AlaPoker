@@ -424,7 +424,6 @@ $(document).ready(function(){
 		placed_bet = false;
 		clearTimeout(timeout);
 		timeout = setTimeout(function(){
-			alert("Your session has timed out");
 			window.location.reload();
 		}, 1801000);
 	}
