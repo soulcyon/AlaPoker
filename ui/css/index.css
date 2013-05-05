@@ -832,6 +832,7 @@ span[money]:before {
 	position: relative
 }
 
+
 #loginbox {
 	top: 0px;
 	left: 0px;
@@ -925,56 +926,6 @@ span[money]:before {
 	vertical-align: middle;
 }
 
-#logindialog a {
-	text-decoration: underline;
-}
-
-#logindialog {
-	width: 500px;
-}
-
-#logindialog p {
-	position: relative;
-	margin: 4px 0px;
-}
-
-#logindialog table {
-	width: 100%;
-}
-
-#logindialog td {
-	vertical-align: top;
-}
-
-#logindialog td.right {
-	text-align: right;
-}
-
-#logindialog td.right p > label {
-	left: 86px;
-}
-
-#logindialog p > label {
-	position: absolute;
-	font-size: 12px;
-	top: 6px;
-	left: 12px;
-}
-
-#logindialog p input[type=submit] {
-	padding: 6px 16px;
-}
-
-#logindialog p input[type=text], #logindialog p input[type=password] {
-	border-radius: 4px;
-	box-shadow: inset 0px 0px 5px black;
-	outline: none;
-	padding: 6px 12px;
-	width: 150px;
-	font-size: 12px;
-	border: 0px;
-	background: transparent;
-}
 
 #loginbox button {
 	padding: 7px 16px;
@@ -1009,6 +960,7 @@ span[money]:before {
 #loginbox #paypal {
 	background: url(../img/pp.png) no-repeat center center;
 }
+
 
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
 

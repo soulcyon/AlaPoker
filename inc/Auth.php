@@ -6,6 +6,7 @@
  * @copyright  2013 A la poker
  * @license    All rights reserved
  */
+
 class Auth extends API {
 	public static function register($e){
 		$DB = $e->get("DB");
@@ -30,12 +31,24 @@ class Auth extends API {
 			$_POST["pass1"] != $_POST["pass2"] )
 			die(self::json(array("error" => "Passwords do not match")));
 
-		mail("$id", "AlaPoker :: Thanks for signing up!", "Your password is " . $_POST["pass1"]);
+		// Send Mail
+		$message = '<html><body>';
+		$message .= '<img src="http://alapoker.net/wp-content/uploads/2013/05/Logo-2-jpg11.jpg" alt="A la Poker" />';
+		$message .= '<h3>We cannot recover your password at a future date.  Please keep this email safe.</h3>';
+		$message .= '<table rules="all" style="border-color: #666;" cellpadding="10">';
+		$message .= "<tr style='background: #eee;'><td><strong>Login:</strong> </td><td>" . strip_tags($id) . "</td></tr>";
+		$message .= "<tr><td><strong>Password:</strong> </td><td>" . strip_tags($_POST['pass1']) . "</td></tr>";
+		$message .= "</table>";
+		$message .= "</body></html>";
+
+		$headers = "MIME-Version: 1.0\r\n";
+		$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+		mail($id, "AlaPoker :: Thanks for signing up!", $message, $headers);
 
 		echo self::json($DB->exec("INSERT INTO `users` (`email`, `balance`, `ip`, `nickname`, `pass`)
 			VALUES (?, 10000, INET_ATON(?), ?, ?)", array(1=>$id, 2=>$ip, 3=>$nick, 4=>$pass)));
 	}
-	public static function rawAuth($e){
+	public static function raw($e){
 		$DB = $e->get("DB");
 
 		$id = $_POST["email"];
@@ -64,6 +77,7 @@ class Auth extends API {
 		}
 		echo self::json(array("result" => $result));
 	}
+
 	public static function nick($e){
 		$DB = $e->get("DB");
 
@@ -77,6 +91,7 @@ class Auth extends API {
 		}
 		echo self::json($result);
 	}
+
 	public static function data($e){
 		$DB = $e->get("DB");
 
@@ -94,44 +109,6 @@ class Auth extends API {
 			"nickname" => $rows[0]["nickname"],
 			"balance" => $rows[0]["balance"]
 		));
-	}
-	public static function persona($e){
-	}
-	public static function janrain($e){
-		if( !isset($_POST["token"]) ){
-			return Header("Location: /");
-		}
-		$token = $_POST["token"];
-		$res = json_decode(Auth::rain(array(
-			"token" => $token,
-			"apiKey" => "9cc9fa11fef4c01c327c1c296e5a25460b0c9ea4"
-		)), true);
-		if( $res["stat"] === "ok" ){
-			$_SESSION["user"] = $res["profile"]["email"];
-		}
-		Header("Location: /");
-	}
-	private static function rain($fields){
-		$url = 'https://rpxnow.com/api/v2/auth_info';
-		$fields_string = "";
-
-		foreach($fields as $key=>$value) {
-			$fields_string .= $key.'='.$value.'&';
-		}
-		rtrim($fields_string, '&');
-
-		$ch = curl_init();
-
-		curl_setopt($ch,CURLOPT_URL, $url);
-		curl_setopt($ch,CURLOPT_POST, count($fields));
-		curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER, 1);
-
-		$result = curl_exec($ch);
-
-		curl_close($ch);
-
-		return $result;
 	}
 }
 ?>

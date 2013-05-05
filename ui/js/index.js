@@ -2,10 +2,6 @@ var timeout = setTimeout(function(){
 	window.location.reload();
 }, 1801000);
 
-// Get rid of unnecessary hashes
-if (window.location.hash == '#http://blog.alapoker.net') window.location.hash = '';
-if (window.location.hash == '#_=_') window.location.href = '/';
-
 $(document).ready(function(){
 	var AJAX_SCRIPT = "/game/",
 		LOGIN_SCRIPT = "/auth/";
@@ -23,18 +19,10 @@ $(document).ready(function(){
 			});
 		} else if( d.result !== true ){
 			shuffle_loop(0);
-			$.getScript("/js/login.js", function(){
-				console.log("login script loaded");
-			});
+			$.getScript("/js/login.js");
 			return $("body").find("#ui").hide().end().find("#header2").show();
 		} else {
 			$("#message").html("Choose number of hands to play.");
-			navigator.id.watch({
-			    onlogin: function(assertion) {
-			    },
-			    onlogout: function(){
-			    }
-			});
 		}
 
 		can_play = true;
@@ -48,8 +36,7 @@ $(document).ready(function(){
 				}, 125);
 				e.stopPropagation();
 				if( placed_bet ) return false;
-
-				navigator.id.logout();
+				
 			    window.location.href = "/logout";
 				return false;
 			});
@@ -168,7 +155,7 @@ $(document).ready(function(){
 				});
 			}
 			$("#ui").hide();
-			$("#message").html("<span class=\"bet_placeholder\">You must make at least one bet pre-flop.</span>");
+			$("#message").html("You must make at least one bet pre-flop.");
 		});
 	}, 1300);
 	});
@@ -194,7 +181,7 @@ $(document).ready(function(){
 			if( push_flag ) {
 				$(".push.turn").trigger("click");
 			} else {
-				$("#message").html("Click <button class=\"turn button\">turn</button> or make a bet!");
+				$("#message").html("Click <button class=\"turn button4\">turn</button> or make a bet!");
 			}
 		});
 	});
@@ -219,7 +206,7 @@ $(document).ready(function(){
 			if( push_flag ) {
 				$(".push.river").trigger("click");
 			} else {
-				$("#message").html("Click <button class=\"river button\">river</button> or make a bet!");
+				$("#message").html("Click <button class=\"river button4\">river</button> or make a bet!");
 			}
 		});
 	});
@@ -306,7 +293,7 @@ $(document).ready(function(){
 				});
 			});
 			$("#reset").hide();
-			$("#message").html("<button class=\"restart button\">Play Again</button>");
+			$("#message").html("<button class=\"restart button4\">Play Again</button>");
 		});
 	});
 	$(document).delegate("button.riverPush", "click", function(){
@@ -375,7 +362,7 @@ $(document).ready(function(){
 					});
 					if( state == 1 )
 						$("#message").html(
-							$("<button />").addClass(hands < 0 ? "riverPush button" : "flop button").html(hands < 0 ? "River" : "Flop")
+							$("<button />").addClass(hands < 0 ? "riverPush button4" : "flop button4").html(hands < 0 ? "River" : "Flop")
 						);
 
 					$.modal.close();
@@ -548,8 +535,4 @@ $(document).ready(function(){
 		}
 		return t.append(f, b);
 	}
-
-	$(".janrainEngage").click(function(){
-		$("#janrainView div > div > a").parent().hide();
-	});
 });

@@ -1,0 +1,45 @@
+#logindialog a {
+	text-decoration: underline;
+}
+
+#logindialog {
+	width: 650px;
+}
+
+#logindialog p {
+	position: relative;
+	margin: 4px 0px;
+}
+
+#logindialog table {
+	width: 100%;
+}
+
+#logindialog section {
+	vertical-align: top;
+	display: inline-block;
+	margin-right: 39px;
+	width: 175px;
+}
+
+#logindialog p > label {
+	position: absolute;
+	font-size: 12px;
+	top: 6px;
+	left: 12px;
+}
+
+#logindialog p input[type=submit] {
+	padding: 6px 16px;
+}
+
+#logindialog p input[type=text], #logindialog p input[type=password] {
+	border-radius: 4px;
+	box-shadow: inset 0px 0px 5px black;
+	outline: none;
+	padding: 6px 12px;
+	width: 150px;
+	font-size: 12px;
+	border: 0px;
+	background: transparent;
+}

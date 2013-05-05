@@ -8,7 +8,7 @@ $(document).ready(function(){
 		if( $(this).val() != "" ) return;
 		$(this).parent().find("label").show();
 	});
-	$("#opendialog").click(function(){
+	$("[rel=opendialog]").click(function(){
 		$("#logindialog").modal({
 			zIndex: 600
 		});
@@ -17,7 +17,7 @@ $(document).ready(function(){
 		if( ajax_flag ) return false;
 
 		ajax_flag = true;
-		$.post("/auth/rawAuth", $(this).serialize(), function(d){
+		$.post("/auth/raw", $(this).serialize(), function(d){
 			ajax_flag = false;
 			if( d.length == 0 ){
 				return alert("Invalid Username or Password");
@@ -40,18 +40,5 @@ $(document).ready(function(){
 			}
 		});
 		return false;
-	});
-	navigator.id.watch({
-	    onlogin: function(assertion) {
-	        $.post('/auth/persona', {
-	            assertion: assertion,
-	            cacheBust: new Date()
-	        }, function(msg){
-	            window.location.href = "/";
-	        });
-	    },
-	    onlogout: function(){
-
-	    }
 	});
 });

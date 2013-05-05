@@ -14,11 +14,13 @@ session_start();
 
 // Required libraries
 require_once "inc/API.php";
+require_once "hybridauth/handle.php";
 require_once "inc/Auth.php";
 require_once "inc/Game.php";
 
 $f3 = require("lib/base.php");
 $f3->set("UI","ui/");
+$f3->set("DEBUG",3);
 $f3->set("DB", require("db.php"));
 
 // Generic resource handling
@@ -63,6 +65,9 @@ $f3->route("GET /admin", function($e){
 
 // User Auth Handle
 $f3->route("POST /auth/@action", "Auth::@action");
+
+// HybridAuth Handle
+$f3->route("GET /hauth/@action", "HAuth::verify");
 
 // Game API Handle
 $f3->route("POST /game/@action", "Game->@action");

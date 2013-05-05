@@ -136,6 +136,7 @@ textarea {
     box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #111, 0 4px 2px rgba(0, 0, 0, .5);
     cursor: pointer;
     outline: none;
+    padding: 2px 8px;
 }
 
 .button3:active, .button3[disabled] {
@@ -152,6 +153,37 @@ textarea {
     background: -ms-linear-gradient(top, #313131 0%,#474747 98%);
     background: linear-gradient(to bottom, #313131 0%,#474747 98%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#313131', endColorstr='#474747',GradientType=0 );
+}
+
+.button4 {
+    position: relative;
+    top: -6px;
+    padding: 4px 16px 6px 16px;
+    color: #fff;
+    border-bottom: 1px solid #331715;
+    border-left: 1px solid #4d221f;
+    border-right: 1px solid #4d221f;
+    border-top: 1px solid #8c3e38;
+    font-size: 14px;
+    text-align: center;
+    text-transform: uppercase;
+    -webkit-box-shadow: inset 0 1px 10px 1px #ee665c, 0px 1px 0 #4d201d, 0 6px 0px #53221f, 0 8px 4px 1px #111111;
+    background: #a84841;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 10px 1px #ee665c, 0px 1px 0 #4d201d, 0 6px 0px #53221f, 0 8px 4px 1px #111111;
+    text-shadow: 0px -1px 1px #4d211e;
+}
+
+.button4:hover {
+    -webkit-box-shadow: inset 0 0px 20px 1px #ff8f87, 0px 1px 0 #4d201d, 0 6px 0px #53221f, 0 8px 4px 1px #111111;
+    box-shadow: inset 0 0px 20px 1px #ff8f87, 0px 1px 0 #4d201d, 0 6px 0px #53221f, 0 8px 4px 1px #111111;
+    cursor: pointer;
+}
+
+.button4:active, .button4[disabled] {
+    top: -1px;
+    -webkit-box-shadow: inset 0 1px 10px 1px #ee665c, 0 1px 0 #4d201d, 0 2px 0 #53221f, 0 4px 3px 0 #111111;
+    box-shadow: inset 0 1px 10px 1px #ee665c, 0 1px 0 #4d201d, 0 2px 0 #53221f, 0 4px 3px 0 #111111;
 }
 
 .chromeframe {
