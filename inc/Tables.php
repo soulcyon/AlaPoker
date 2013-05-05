@@ -1,6 +1,6 @@
 <?php
 /**
- * Tables.php
+ * Raw tables for odds calculation
  *
  * @author     Sashank Tadepalli <dijjit@gmail.com>
  * @author     Mihir Sanghavi <mihir.h.sanghavi@gmail.com>

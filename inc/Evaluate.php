@@ -1,9 +1,9 @@
 <?php
 /**
- * Evalulate.php
+ * Poker odds evaluation engine
  *
- * @author     Mihir Sanghavi <mihir.h.sanghavi@gmail.com>
  * @author     Sashank Tadepalli <dijjit@gmail.com>
+ * @author     Mihir Sanghavi <mihir.h.sanghavi@gmail.com>
  * @copyright  2013 A la poker
  * @license    All rights reserved
  */

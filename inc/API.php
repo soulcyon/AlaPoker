@@ -1,4 +1,11 @@
 <?php
+/**
+ * Essential API for all sub classes
+ *
+ * @author     Sashank Tadepalli <dijjit@gmail.com>
+ * @copyright  2013 A la poker
+ * @license    All rights reserved
+ */
 class API {
 	protected static function json($d, $code = 200){
 		Header("Content-type: application/json");

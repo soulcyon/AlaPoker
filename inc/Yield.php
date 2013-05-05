@@ -1,6 +1,6 @@
 <?php
 /**
- * Yield.php
+ * Poker evaluation yielding specifics odds
  *
  * @author     Sashank Tadepalli <dijjit@gmail.com>
  * @author     Mihir Sanghavi <mihir.h.sanghavi@gmail.com>

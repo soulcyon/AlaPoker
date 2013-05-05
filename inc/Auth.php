@@ -1,4 +1,11 @@
 <?php
+/**
+ * Authentication engine
+ *
+ * @author     Sashank Tadepalli <dijjit@gmail.com>
+ * @copyright  2013 A la poker
+ * @license    All rights reserved
+ */
 class Auth extends API {
 	public static function register($e){
 		$DB = $e->get("DB");
@@ -88,6 +95,8 @@ class Auth extends API {
 			"balance" => $rows[0]["balance"]
 		));
 	}
+	public static function persona($e){
+	}
 	public static function janrain($e){
 		if( !isset($_POST["token"]) ){
 			return Header("Location: /");
@@ -101,11 +110,6 @@ class Auth extends API {
 			$_SESSION["user"] = $res["profile"]["email"];
 		}
 		Header("Location: /");
-	}
-	public static function raw($e){
-		require_once "inc/providers/raw.php";
-		$t = new AuthProvider();
-		$t->login();
 	}
 	private static function rain($fields){
 		$url = 'https://rpxnow.com/api/v2/auth_info';
