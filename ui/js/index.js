@@ -3,8 +3,8 @@ var timeout = setTimeout(function(){
 }, 1801000);
 
 $(document).ready(function(){
-	var AJAX_SCRIPT = "/game/",
-		LOGIN_SCRIPT = "/auth/";
+	var AJAX_SCRIPT = window.root + "/game/",
+		LOGIN_SCRIPT = window.root + "/auth/";
 
 	// Check login and load user data
 	$.post(LOGIN_SCRIPT + "verify", {}, function(d){
@@ -19,7 +19,7 @@ $(document).ready(function(){
 			});
 		} else if( d.result !== true ){
 			shuffle_loop(0);
-			$.getScript("/js/login.js");
+			$.getScript(window.root + "/js/login.js");
 			return $("body").find("#ui").hide().end().find("#header2").show();
 		} else {
 			$("#message").html("Choose number of hands to play.");
@@ -37,7 +37,7 @@ $(document).ready(function(){
 				e.stopPropagation();
 				if( placed_bet ) return false;
 				
-			    window.location.href = "/logout";
+			    window.location.href = window.root + "/logout";
 				return false;
 			});
 		});
@@ -60,7 +60,7 @@ $(document).ready(function(){
 			.eq(i)
 			.css("z-index", 500)
 			.animate({
-				left: (Math.random() > 0.5 ? 1 : -1) * (window.mobile_version ? 30 : 90) +"px",
+				left: (Math.random() > 0.5 ? 1 : -1) * 90 +"px",
 				marginTop: (Math.random() > 0.5 ? -1 : 1) * (Math.random() * 20 + 5) +"px"
 			}, 125, function(){
 				$(this).css("z-index", i - 1).animate({
@@ -103,7 +103,7 @@ $(document).ready(function(){
 				}
 				var i = holePositions[o],
 					off = $("#hands .front").eq(i).find("img").eq(0).offset(),
-					a = $("<img />").attr("src", "/img/Back.png").addClass("fly").data("i", i),
+					a = $("<img />").attr("src", window.root + "/img/Back.png").addClass("fly").data("i", i),
 					newLeft = off.left,
 					newTop = off.top;
 				$("body").append(a);
@@ -111,8 +111,8 @@ $(document).ready(function(){
 					position: "absolute",
 					top: $("#deck").offset().top,
 					left: $("#deck").offset().left,
-					width: window.mobile_version ? 50 : 100,
-					height: window.mobile_version ? 70 : 140,
+					width: 100,
+					height: 140,
 					zIndex: 500 - i
 				}).animate({
 					top: newTop,
@@ -135,7 +135,7 @@ $(document).ready(function(){
 				}
 				var i = holePositions[o],
 					off = $("#hands .front").eq(i).find("img").eq(1).offset(),
-					a = $("<img />").attr("src", "/img/Back.png").addClass("fly").data("i", i),
+					a = $("<img />").attr("src", window.root + "/img/Back.png").addClass("fly").data("i", i),
 					newLeft = off.left,
 					newTop = off.top;
 				$("body").append(a);
@@ -143,8 +143,8 @@ $(document).ready(function(){
 					position: "absolute",
 					top: $("#deck").offset().top,
 					left: $("#deck").offset().left,
-					width: window.mobile_version ? 50 : 100,
-					height: window.mobile_version ? 70 : 140,
+					width: 100,
+					height: 140,
 					zIndex: 500 - i
 				}).animate({
 					top: newTop,
@@ -523,14 +523,13 @@ $(document).ready(function(){
 		var f = $("<div />").addClass("front"),
 			b = $("<div />").addClass("back"),
 			t = $("<div />").addClass("hole").addClass(prefix);
-		if( window.mobile_version )
-			t.addClass("mobi");
+
 		for(var i = 1;i < arguments.length;i++){
 			f.append(
-				$("<img />").attr("src", "/img/Back.png")
+				$("<img />").attr("src", window.root + "/img/Back.png")
 			);
 			b.append(
-				$("<img />").attr("src", (window.mobile_version ? "m" : "/img/") + arguments[i] + ".png")
+				$("<img />").attr("src", window.root + "/img/" + arguments[i] + ".png")
 			);
 		}
 		return t.append(f, b);

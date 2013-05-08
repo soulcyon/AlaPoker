@@ -81,6 +81,7 @@ function parseTemplate($e, $title = "default"){
 
 	$js = "ui/js/$e.js";
 
+	$f3->set("root", "http://game.alapoker.net/");
 	$f3->set("title", $title);
 	$f3->set("page", $e);
 	$f3->set("ptime", file_exists($js) ? filemtime($js) : "");

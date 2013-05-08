@@ -1,7 +1,7 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="/js/jquery.js"><\/script>')</script>
-        <script src="/js/plugins.js"></script>
-        <script src="/js/main.js"></script>
-        <script src="/js/{{ @page }}.js?{{ @ptime }}"></script>
+        <script>window.jQuery || document.write('<script src="{{ @root }}/js/jquery.js"><\/script>')</script>
+        <script src="{{ @root }}/js/plugins.js"></script>
+        <script src="{{ @root }}/js/main.js"></script>
+        <script src="{{ @root }}/js/{{ @page }}.js?{{ @ptime }}"></script>
     </body>
 </html>

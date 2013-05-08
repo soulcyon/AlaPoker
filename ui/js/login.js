@@ -17,7 +17,7 @@ $(document).ready(function(){
 		if( ajax_flag ) return false;
 
 		ajax_flag = true;
-		$.post("/auth/raw", $(this).serialize(), function(d){
+		$.post(window.root + "/auth/raw", $(this).serialize(), function(d){
 			ajax_flag = false;
 			if( d.length == 0 ){
 				return alert("Invalid Username or Password");
@@ -31,7 +31,7 @@ $(document).ready(function(){
 		if( ajax_flag ) return false;
 
 		ajax_flag = true;
-		$.post("/auth/register", $(this).serialize(), function(d){
+		$.post(window.root + "/auth/register", $(this).serialize(), function(d){
 			ajax_flag = false;
 			if( d.error ){
 				return alert(d.error);
